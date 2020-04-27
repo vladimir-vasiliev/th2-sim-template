@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+    id 'com.google.protobuf' version '0.8.8'
+}
+
+ext {
+    grpc_version        = '1.27.1'
+    protobuf_version    = '3.11.0'
+    simulator_version = "0.1-SNAPSHOT"
+
+    genDir              = file('src/gen')
+    sharedDir           = file("${project.rootDir}/shared")
+}
+
+group 'com.exactpro.th2'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        name 'MavenLocal'
+        url sharedDir
+    }
+    mavenCentral()
+    maven {
+        name 'Artifactory snapshot'
+        url 'http://artifactory5.exp.exactpro.com/artifactory/libs-snapshot'
+    }
+    mavenLocal()
+
+    
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+    }
+}
+
+dependencies {
+    compile "com.exactpro.th2:th2-simulator:${simulator_version}"
+    
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.11.0"
+
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpc_version}"
+        }
+    }
+    generateProtoTasks.generatedFilesBaseDir = "${projectDir}/src/gen" //FIXME: Hot fix because files are generated in project from executed build
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+        ofSourceSet('main')
+    }
+
+    //Turn on if use kotlin
+    //compileKotlin.dependsOn.add('generateProto')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java', 'src/gen/main/java', 'src/gen/main/grpc'
+        }
+    }
+}
+
+
+clean {
+    delete genDir
+}
