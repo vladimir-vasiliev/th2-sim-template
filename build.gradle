@@ -1,12 +1,13 @@
 plugins {
     id 'java'
+    id 'application'
     id 'com.google.protobuf' version '0.8.8'
 }
 
 ext {
     grpc_version        = '1.27.1'
     protobuf_version    = '3.11.0'
-    simulator_version = "0.1-SNAPSHOT"
+    simulator_version   = "0.1-SNAPSHOT"
 
     genDir              = file('src/gen')
     sharedDir           = file("${project.rootDir}/shared")
@@ -63,6 +64,7 @@ protobuf {
 
     //Turn on if use kotlin
     //compileKotlin.dependsOn.add('generateProto')
+    compileJava.dependsOn.add('generateProto')
 }
 
 sourceSets {
@@ -73,6 +75,9 @@ sourceSets {
     }
 }
 
+application {
+    mainClassName = "com.exactpro.th2.simulator.run.SimulatorServerMain"
+}
 
 clean {
     delete genDir

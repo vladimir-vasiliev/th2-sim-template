@@ -1,0 +1,16 @@
+syntax = 'proto3';
+package template;
+
+import "simulator/simulator.proto";
+import "phase_1/infra.proto";
+
+option java_multiple_files = true;
+option java_package = "com.exactpro.th2.simulator.template";
+
+message TemplateFixCreate {
+    map<string, phase_1.Value> fields = 1;
+}
+
+service TemplateSimulatorService {
+    rpc createRule_FIX(TemplateFixCreate) returns (simulator.RuleID) {}
+}

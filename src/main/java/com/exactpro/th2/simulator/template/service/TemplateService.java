@@ -1,17 +1,17 @@
-package com.exactpro.th2.simulator.demo.service;
+package com.exactpro.th2.simulator.template.service;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.exactpro.th2.simulator.DemoFixCreate;
-import com.exactpro.th2.simulator.DemoFixSimulatorGrpc;
 import com.exactpro.th2.simulator.ISimulator;
 import com.exactpro.th2.simulator.ISimulatorPart;
 import com.exactpro.th2.simulator.RuleID;
-import com.exactpro.th2.simulator.demo.rule.FIXRule;
+import com.exactpro.th2.simulator.template.TemplateFixCreate;
+import com.exactpro.th2.simulator.template.TemplateSimulatorServiceGrpc;
+import com.exactpro.th2.simulator.template.rule.FIXRule;
 
 import io.grpc.stub.StreamObserver;
 
-public class DemoFix extends DemoFixSimulatorGrpc.DemoFixSimulatorImplBase implements ISimulatorPart {
+public class TemplateService extends TemplateSimulatorServiceGrpc.TemplateSimulatorServiceImplBase implements ISimulatorPart {
 
     private ISimulator simulator;
 
@@ -21,7 +21,7 @@ public class DemoFix extends DemoFixSimulatorGrpc.DemoFixSimulatorImplBase imple
     }
 
     @Override
-    public void createRuleFIX(DemoFixCreate request, StreamObserver<RuleID> responseObserver) {
+    public void createRuleFIX(TemplateFixCreate request, StreamObserver<RuleID> responseObserver) {
         responseObserver.onNext(simulator.addRule(new FIXRule(request.getFieldsMap())));
         responseObserver.onCompleted();
     }

@@ -1,7 +1,7 @@
-package com.exactpro.th2.simulator.demo.rule;
+package com.exactpro.th2.simulator.template.rule;
 
-import static com.exactpro.th2.simulator.demo.MessageUtils.copyFields;
-import static com.exactpro.th2.simulator.demo.MessageUtils.putFields;
+import static com.exactpro.th2.simulator.util.MessageUtils.copyFields;
+import static com.exactpro.th2.simulator.util.MessageUtils.putFields;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
