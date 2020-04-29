@@ -7,14 +7,14 @@ plugins {
 ext {
     grpc_version        = '1.27.1'
     protobuf_version    = '3.11.0'
-    simulator_version   = "0.1-SNAPSHOT"
+    simulator_version   = "${simulator_version_major}.${simulator_version_minor}-SNAPSHOT"
 
     genDir              = file('src/gen')
     sharedDir           = file("${project.rootDir}/shared")
 }
 
 group 'com.exactpro.th2'
-version '1.0-SNAPSHOT'
+version "${version_major}.${version_minor}-SNAPSHOT"
 
 sourceCompatibility = 1.8
 
