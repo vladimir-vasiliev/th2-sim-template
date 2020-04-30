@@ -22,7 +22,9 @@ public class TemplateService extends TemplateSimulatorServiceGrpc.TemplateSimula
 
     @Override
     public void createRuleFIX(TemplateFixCreate request, StreamObserver<RuleID> responseObserver) {
-        responseObserver.onNext(simulator.addRule(new FIXRule(request.getFieldsMap())));
+        FIXRule rule = new FIXRule(request.getFieldsMap());
+        RuleID ruleId = simulator.addRule(rule, request.getConnectivityId());
+        responseObserver.onNext(ruleId);
         responseObserver.onCompleted();
     }
 }

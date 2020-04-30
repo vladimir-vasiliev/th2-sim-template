@@ -9,6 +9,7 @@ option java_package = "com.exactpro.th2.simulator.template";
 
 message TemplateFixCreate {
     map<string, phase_1.Value> fields = 1;
+    phase_1.ConnectivityId connectivityId = 2;
 }
 
 service TemplateSimulatorService {

@@ -27,11 +27,6 @@ public class FIXRule extends MessageCompareRule {
         super("NewOrderSingle", fieldsValue);
     }
 
-    @Override
-    public ConnectivityId getConnectivityId() {
-        return ConnectivityId.newBuilder().setConnectivityId("fix_server").build();
-    }
-
     @NotNull
     @Override
     public List<Message> handleTriggered(@NotNull Message message) {
@@ -56,7 +51,6 @@ public class FIXRule extends MessageCompareRule {
                         .setMetadata(Metadata
                                 .newBuilder()
                                 .setMessageType("ExecutionReport")
-                                //.setNamespace(message.getMetadata().getNamespace())
                                 .build())
                         .build()
         );
