@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.exactpro.evolution.api.phase_1.ConnectivityId;
 import com.exactpro.evolution.api.phase_1.Message;
 import com.exactpro.evolution.api.phase_1.Metadata;
 import com.exactpro.evolution.api.phase_1.Value;
