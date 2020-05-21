@@ -28,9 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.exactpro.evolution.api.phase_1.Message;
-import com.exactpro.evolution.api.phase_1.Metadata;
-import com.exactpro.evolution.api.phase_1.Value;
+import com.exactpro.th2.infra.grpc.Message;
+import com.exactpro.th2.infra.grpc.MessageMetadata;
+import com.exactpro.th2.infra.grpc.Value;
 import com.exactpro.th2.simulator.rule.impl.MessageCompareRule;
 
 public class FIXRule extends MessageCompareRule {
@@ -63,7 +63,7 @@ public class FIXRule extends MessageCompareRule {
                         "SecurityIDSource",
                         "OrdType",
                         "OrderQty")
-                        .setMetadata(Metadata
+                        .setMetadata(MessageMetadata
                                 .newBuilder()
                                 .setMessageType("ExecutionReport")
                                 .build())

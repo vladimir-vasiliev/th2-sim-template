@@ -24,9 +24,9 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.exactpro.evolution.api.phase_1.Message;
-import com.exactpro.evolution.api.phase_1.Message.Builder;
-import com.exactpro.evolution.api.phase_1.Metadata;
+import com.exactpro.th2.infra.grpc.Message;
+import com.exactpro.th2.infra.grpc.Message.Builder;
+import com.exactpro.th2.infra.grpc.MessageMetadata;
 import com.exactpro.th2.simulator.rule.IRule;
 import com.exactpro.th2.simulator.rule.test.AbstractRuleTest;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
@@ -39,7 +39,7 @@ public class TestFIXRule extends AbstractRuleTest {
         return (i % 4 == 0 ?
                 MessageUtils.putField(builder, "ClOrdId", "order_id_2") :
                 MessageUtils.putFields(builder, "ClOrdId", "order_id_1", "1", "1", "2", "2"))
-                .setMetadata(Metadata.newBuilder().setMessageType("NewOrderSingle").build()).build();
+                .setMetadata(MessageMetadata.newBuilder().setMessageType("NewOrderSingle").build()).build();
     }
 
     @Override

@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 
 import com.exactpro.th2.simulator.ISimulator;
 import com.exactpro.th2.simulator.ISimulatorPart;
-import com.exactpro.th2.simulator.RuleID;
-import com.exactpro.th2.simulator.template.TemplateFixCreate;
-import com.exactpro.th2.simulator.template.TemplateSimulatorServiceGrpc;
+import com.exactpro.th2.simulator.grpc.RuleID;
+import com.exactpro.th2.simulator.template.grpc.TemplateFixCreate;
+import com.exactpro.th2.simulator.template.grpc.TemplateSimulatorServiceGrpc;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
 
 import io.grpc.stub.StreamObserver;
@@ -39,7 +39,7 @@ public class TemplateService extends TemplateSimulatorServiceGrpc.TemplateSimula
     @Override
     public void createRuleFIX(TemplateFixCreate request, StreamObserver<RuleID> responseObserver) {
         FIXRule rule = new FIXRule(request.getFieldsMap());
-        RuleID ruleId = simulator.addRule(rule, request.getConnectivityId());
+        RuleID ruleId = simulator.addRule(rule, request.getConnectionId());
         responseObserver.onNext(ruleId);
         responseObserver.onCompleted();
     }
