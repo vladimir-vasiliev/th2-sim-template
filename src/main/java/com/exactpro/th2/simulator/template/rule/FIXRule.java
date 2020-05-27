@@ -39,7 +39,7 @@ public class FIXRule extends MessageCompareRule {
     AtomicInteger execId = new AtomicInteger(0);
 
     public FIXRule(@Nullable Map<String, Value> fieldsValue) {
-        super("NewOrderSingle", fieldsValue);
+        init("NewOrderSingle", fieldsValue);
     }
 
     @NotNull
