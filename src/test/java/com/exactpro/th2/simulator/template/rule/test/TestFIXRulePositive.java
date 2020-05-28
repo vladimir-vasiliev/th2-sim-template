@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.exactpro.th2.infra.grpc.Message;
 import com.exactpro.th2.infra.grpc.Message.Builder;
@@ -59,5 +60,11 @@ public class TestFIXRulePositive extends AbstractRuleTest {
     @Override
     protected boolean checkResultMessages(int index, List<Message> messages) {
         return index != 1 && (index % 4 != 0 || messages.size() == 1 && messages.get(0).getMetadata().getMessageType().equals("ExecutionReport"));
+    }
+
+    @Nullable
+    @Override
+    protected String getPathLoggingFile() {
+        return "./output.csv";
     }
 }
