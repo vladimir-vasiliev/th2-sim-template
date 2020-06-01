@@ -54,9 +54,6 @@ public class TestFIXRuleNegative extends AbstractRuleTest {
 
     @Override
     protected boolean checkResultMessages(int index, List<Message> messages) {
-        for (Message message : messages) {
-            System.out.println(message);
-        }
         return index < 1 || messages.size() == 0;
     }
 }
