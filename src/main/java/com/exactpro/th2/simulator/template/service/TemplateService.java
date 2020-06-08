@@ -24,6 +24,8 @@ import com.exactpro.th2.simulator.grpc.RuleID;
 import com.exactpro.th2.simulator.template.grpc.TemplateFixCreate;
 import com.exactpro.th2.simulator.template.grpc.TemplateSimulatorServiceGrpc;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
+import com.exactpro.th2.simulator.template.rule.KotlinFIXRule;
+import com.exactpro.th2.simulator.util.ServiceUtils;
 
 import io.grpc.stub.StreamObserver;
 
@@ -42,5 +44,10 @@ public class TemplateService extends TemplateSimulatorServiceGrpc.TemplateSimula
         RuleID ruleId = simulator.addRule(rule, request.getConnectionId());
         responseObserver.onNext(ruleId);
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void createKotlinRuleFIX(TemplateFixCreate request, StreamObserver<RuleID> responseObserver) {
+        ServiceUtils.addRule(new KotlinFIXRule(request.getFieldsMap()), request.getConnectionId(), simulator, responseObserver);
     }
 }

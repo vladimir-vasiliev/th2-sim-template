@@ -21,6 +21,7 @@ import static com.exactpro.th2.simulator.util.ValueUtils.getValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import com.exactpro.th2.infra.grpc.Message;
 import com.exactpro.th2.infra.grpc.Message.Builder;
 import com.exactpro.th2.infra.grpc.MessageMetadata;
+import com.exactpro.th2.infra.grpc.Value;
 import com.exactpro.th2.simulator.rule.IRule;
 import com.exactpro.th2.simulator.rule.test.AbstractRuleTest;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
+import com.exactpro.th2.simulator.util.ValueUtils;
 
 public class TestSomeRules extends AbstractRuleTest {
 
@@ -42,7 +45,9 @@ public class TestSomeRules extends AbstractRuleTest {
     @NotNull
     @Override
     protected Message createMessage(int i, @NotNull Builder builder) {
-        return (i % 2 == 0 ? putField(builder, "ClOrdId", "ord_1") : putField(builder, "ClOrdId", "ord_2"))
+        return (i % 2 == 0
+                ? putField(builder, "ClOrdId", "ord_1")
+                : putField(builder, "ClOrdId", "ord_2"))
                 .setMetadata(MessageMetadata.newBuilder().setMessageType("NewOrderSingle").build())
                 .build();
     }
@@ -51,13 +56,21 @@ public class TestSomeRules extends AbstractRuleTest {
     @Override
     protected List<IRule> createRules() {
         List<IRule> list = new ArrayList<>();
-        list.add(new FIXRule(Collections.singletonMap("ClOrdId", getValue("ord_1"))));
-        list.add(new FIXRule(Collections.singletonMap("ClOrdId", getValue("ord_2"))));
+
+        var arguments1 = new HashMap<String, Value>();
+        arguments1.put("ClOrdId", ValueUtils.getValue("ord_1"));
+        list.add(new FIXRule(arguments1));
+
+        var arguments2 = new HashMap<String, Value>();
+        arguments2.put("ClOrdId", ValueUtils.getValue("ord_2"));
+        list.add(new FIXRule(arguments2));
+
         return list;
     }
 
     @Override
     protected boolean checkResultMessages(int index, List<Message> messages) {
-        return messages.size() == 1 && messages.get(0).getMetadata().getMessageType().equals("ExecutionReport");
+        return messages.size() == 1
+                && messages.get(0).getMetadata().getMessageType().equals("ExecutionReport");
     }
 }

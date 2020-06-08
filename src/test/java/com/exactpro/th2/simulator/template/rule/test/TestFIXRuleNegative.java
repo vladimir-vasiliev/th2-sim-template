@@ -19,6 +19,7 @@ package com.exactpro.th2.simulator.template.rule.test;
 import static com.exactpro.th2.simulator.util.ValueUtils.getValue;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +27,12 @@ import org.jetbrains.annotations.NotNull;
 import com.exactpro.th2.infra.grpc.Message;
 import com.exactpro.th2.infra.grpc.Message.Builder;
 import com.exactpro.th2.infra.grpc.MessageMetadata;
+import com.exactpro.th2.infra.grpc.Value;
 import com.exactpro.th2.simulator.rule.IRule;
 import com.exactpro.th2.simulator.rule.test.AbstractRuleTest;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
 import com.exactpro.th2.simulator.util.MessageUtils;
+import com.exactpro.th2.simulator.util.ValueUtils;
 
 public class TestFIXRuleNegative extends AbstractRuleTest {
 
@@ -49,7 +52,9 @@ public class TestFIXRuleNegative extends AbstractRuleTest {
     @NotNull
     @Override
     protected List<IRule> createRules() {
-        return Collections.singletonList(new FIXRule(Collections.singletonMap("ClOrdId", getValue("ord_0"))));
+        var arguments = new HashMap<String, Value>();
+        arguments.put("ClOrdId", ValueUtils.getValue("ord_0"));
+        return Collections.singletonList(new FIXRule(arguments));
     }
 
     @Override

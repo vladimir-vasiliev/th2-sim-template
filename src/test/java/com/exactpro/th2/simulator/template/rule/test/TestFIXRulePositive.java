@@ -20,6 +20,7 @@ import static com.exactpro.th2.simulator.util.ValueUtils.getValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +29,13 @@ import org.jetbrains.annotations.Nullable;
 import com.exactpro.th2.infra.grpc.Message;
 import com.exactpro.th2.infra.grpc.Message.Builder;
 import com.exactpro.th2.infra.grpc.MessageMetadata;
+import com.exactpro.th2.infra.grpc.Value;
 import com.exactpro.th2.simulator.rule.IRule;
 import com.exactpro.th2.simulator.rule.test.AbstractRuleTest;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
+import com.exactpro.th2.simulator.template.rule.KotlinFIXRule;
 import com.exactpro.th2.simulator.util.MessageUtils;
+import com.exactpro.th2.simulator.util.ValueUtils;
 
 public class TestFIXRulePositive extends AbstractRuleTest {
 
@@ -53,13 +57,22 @@ public class TestFIXRulePositive extends AbstractRuleTest {
     @Override
     protected List<IRule> createRules() {
         List<IRule> rules = new ArrayList<>();
-        rules.add(new FIXRule(Collections.singletonMap("ClOrdId", getValue("order_id_1"))));
+        var arguments = new HashMap<String, Value>();
+
+        arguments.put("ClOrdId", ValueUtils.getValue("order_id_1"));
+
+        rules.add(new FIXRule(arguments));
         return rules;
     }
 
     @Override
     protected boolean checkResultMessages(int index, List<Message> messages) {
-        return index != 1 && (index % 4 != 0 || messages.size() == 1 && messages.get(0).getMetadata().getMessageType().equals("ExecutionReport"));
+        return index != 1 &&
+                (index % 4 != 0
+                        || messages.size() == 1
+                        && messages.get(0).getMetadata().getMessageType().equals("ExecutionReport")
+                )
+                ;
     }
 
     @Nullable
