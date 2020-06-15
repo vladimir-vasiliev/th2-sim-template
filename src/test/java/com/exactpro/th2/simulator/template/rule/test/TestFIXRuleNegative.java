@@ -16,14 +16,14 @@
 
 package com.exactpro.th2.simulator.template.rule.test;
 
-import static com.exactpro.th2.simulator.util.ValueUtils.getValue;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.exactpro.th2.common.message.MessageUtilsKt;
+import com.exactpro.th2.common.value.ValueUtilsKt;
 import com.exactpro.th2.infra.grpc.Message;
 import com.exactpro.th2.infra.grpc.Message.Builder;
 import com.exactpro.th2.infra.grpc.MessageMetadata;
@@ -31,8 +31,6 @@ import com.exactpro.th2.infra.grpc.Value;
 import com.exactpro.th2.simulator.rule.IRule;
 import com.exactpro.th2.simulator.rule.test.AbstractRuleTest;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
-import com.exactpro.th2.simulator.util.MessageUtils;
-import com.exactpro.th2.simulator.util.ValueUtils;
 
 public class TestFIXRuleNegative extends AbstractRuleTest {
 
@@ -44,7 +42,7 @@ public class TestFIXRuleNegative extends AbstractRuleTest {
     @NotNull
     @Override
     protected Message createMessage(int index, @NotNull Builder builder) {
-        return MessageUtils.putField(builder, "ClOrdId", "ord_" + index)
+        return MessageUtilsKt.addField(builder, "ClOrdId", "ord_" + index)
                 .setMetadata(MessageMetadata.newBuilder().setMessageType("NewOrderSingle"))
                 .build();
     }
@@ -53,7 +51,7 @@ public class TestFIXRuleNegative extends AbstractRuleTest {
     @Override
     protected List<IRule> createRules() {
         var arguments = new HashMap<String, Value>();
-        arguments.put("ClOrdId", ValueUtils.getValue("ord_0"));
+        arguments.put("ClOrdId", ValueUtilsKt.toValue("ord_0"));
         return Collections.singletonList(new FIXRule(arguments));
     }
 

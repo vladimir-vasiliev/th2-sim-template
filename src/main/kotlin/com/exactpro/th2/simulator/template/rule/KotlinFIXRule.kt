@@ -16,14 +16,13 @@
 
 package com.exactpro.th2.simulator.template.rule
 
+import com.exactpro.th2.common.message.addField
+import com.exactpro.th2.common.message.copyField
+import com.exactpro.th2.common.message.setMetadata
 import com.exactpro.th2.infra.grpc.Direction
 import com.exactpro.th2.infra.grpc.Message
 import com.exactpro.th2.infra.grpc.Value
 import com.exactpro.th2.simulator.rule.impl.MessageCompareRule
-import com.exactpro.th2.simulator.util.addField
-import com.exactpro.th2.simulator.util.copyField
-import com.exactpro.th2.simulator.util.setMessageType
-import com.exactpro.th2.simulator.util.setMetadata
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 

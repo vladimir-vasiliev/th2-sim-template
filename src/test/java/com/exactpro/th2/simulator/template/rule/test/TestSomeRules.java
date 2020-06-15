@@ -16,11 +16,10 @@
 
 package com.exactpro.th2.simulator.template.rule.test;
 
-import static com.exactpro.th2.simulator.util.MessageUtils.putField;
-import static com.exactpro.th2.simulator.util.ValueUtils.getValue;
+import static com.exactpro.th2.common.message.MessageUtilsKt.addField;
+import static com.exactpro.th2.common.value.ValueUtilsKt.toValue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,7 +32,6 @@ import com.exactpro.th2.infra.grpc.Value;
 import com.exactpro.th2.simulator.rule.IRule;
 import com.exactpro.th2.simulator.rule.test.AbstractRuleTest;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
-import com.exactpro.th2.simulator.util.ValueUtils;
 
 public class TestSomeRules extends AbstractRuleTest {
 
@@ -46,8 +44,8 @@ public class TestSomeRules extends AbstractRuleTest {
     @Override
     protected Message createMessage(int i, @NotNull Builder builder) {
         return (i % 2 == 0
-                ? putField(builder, "ClOrdId", "ord_1")
-                : putField(builder, "ClOrdId", "ord_2"))
+                ? addField(builder, "ClOrdId", "ord_1")
+                : addField(builder, "ClOrdId", "ord_2"))
                 .setMetadata(MessageMetadata.newBuilder().setMessageType("NewOrderSingle").build())
                 .build();
     }
@@ -58,11 +56,11 @@ public class TestSomeRules extends AbstractRuleTest {
         List<IRule> list = new ArrayList<>();
 
         var arguments1 = new HashMap<String, Value>();
-        arguments1.put("ClOrdId", ValueUtils.getValue("ord_1"));
+        arguments1.put("ClOrdId", toValue("ord_1"));
         list.add(new FIXRule(arguments1));
 
         var arguments2 = new HashMap<String, Value>();
-        arguments2.put("ClOrdId", ValueUtils.getValue("ord_2"));
+        arguments2.put("ClOrdId", toValue("ord_2"));
         list.add(new FIXRule(arguments2));
 
         return list;

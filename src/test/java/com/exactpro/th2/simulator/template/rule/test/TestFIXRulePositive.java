@@ -16,16 +16,15 @@
 
 package com.exactpro.th2.simulator.template.rule.test;
 
-import static com.exactpro.th2.simulator.util.ValueUtils.getValue;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.exactpro.th2.common.message.MessageUtilsKt;
+import com.exactpro.th2.common.value.ValueUtilsKt;
 import com.exactpro.th2.infra.grpc.Message;
 import com.exactpro.th2.infra.grpc.Message.Builder;
 import com.exactpro.th2.infra.grpc.MessageMetadata;
@@ -33,9 +32,6 @@ import com.exactpro.th2.infra.grpc.Value;
 import com.exactpro.th2.simulator.rule.IRule;
 import com.exactpro.th2.simulator.rule.test.AbstractRuleTest;
 import com.exactpro.th2.simulator.template.rule.FIXRule;
-import com.exactpro.th2.simulator.template.rule.KotlinFIXRule;
-import com.exactpro.th2.simulator.util.MessageUtils;
-import com.exactpro.th2.simulator.util.ValueUtils;
 
 public class TestFIXRulePositive extends AbstractRuleTest {
 
@@ -48,8 +44,8 @@ public class TestFIXRulePositive extends AbstractRuleTest {
     @Override
     protected Message createMessage(int index, @NotNull Builder builder) {
         return (index % 4 == 0
-                    ? MessageUtils.putFields(builder, "ClOrdId", "order_id_1", "1", "1", "2", "2")
-                    : MessageUtils.putField(builder, "ClOrdId", "order_id_2"))
+                ? MessageUtilsKt.addFields(builder, "ClOrdId", "order_id_1", "1", "1", "2", "2")
+                : MessageUtilsKt.addField(builder, "ClOrdId", "order_id_2"))
                 .setMetadata(MessageMetadata.newBuilder().setMessageType("NewOrderSingle").build()).build();
     }
 
@@ -59,7 +55,7 @@ public class TestFIXRulePositive extends AbstractRuleTest {
         List<IRule> rules = new ArrayList<>();
         var arguments = new HashMap<String, Value>();
 
-        arguments.put("ClOrdId", ValueUtils.getValue("order_id_1"));
+        arguments.put("ClOrdId", ValueUtilsKt.toValue("order_id_1"));
 
         rules.add(new FIXRule(arguments));
         return rules;
@@ -80,4 +76,6 @@ public class TestFIXRulePositive extends AbstractRuleTest {
     protected String getPathLoggingFile() {
         return "./output.csv";
     }
+
+
 }

@@ -16,10 +16,12 @@
 
 package com.exactpro.th2.simulator.template.rule
 
+import com.exactpro.th2.common.value.getBigDecimal
+import com.exactpro.th2.common.value.getInt
+import com.exactpro.th2.common.value.getString
 import com.exactpro.th2.infra.grpc.Message
 import com.exactpro.th2.simulator.rule.impl.MessagePredicateRule
-import com.exactpro.th2.simulator.util.getInt
-import com.exactpro.th2.simulator.util.getString
+import java.math.BigDecimal
 import java.util.Collections
 import java.util.function.Predicate
 
@@ -28,7 +30,8 @@ class KotlinPredicateRule : MessagePredicateRule() {
         init({mt -> mt == "NewOrderSingle" },
             mapOf(
                 "field" to Predicate { value -> value.getInt()!! > 0},
-                "field2" to Predicate { value -> value.getString()?.matches(Regex("A*")) ?: false}
+                "field2" to Predicate { value -> value.getString()?.matches(Regex("A*")) ?: false},
+                "field3" to Predicate {value -> value.getBigDecimal()?.compareTo(BigDecimal(12))!! >= 0 }
             ))
     }
 
