@@ -17,7 +17,6 @@
 package com.exactpro.th2.simulator.template.rule;
 
 import static com.exactpro.th2.common.message.MessageUtilsKt.addFields;
-import static com.exactpro.th2.common.message.MessageUtilsKt.copyField;
 import static com.exactpro.th2.common.message.MessageUtilsKt.message;
 
 import java.time.LocalDateTime;
@@ -57,7 +56,8 @@ public class FIXRule extends MessageCompareRule {
                 "TradingParty", null,
                 "TransactTime", LocalDateTime.now().toString());
 
-        copyField(executionReport, message, "Side",
+        addFields(executionReport, message,
+                "Side",
                 "LeavesQty",
                 "ClOrdID",
                 "SecurityID",

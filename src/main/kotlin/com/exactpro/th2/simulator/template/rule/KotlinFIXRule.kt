@@ -17,7 +17,7 @@
 package com.exactpro.th2.simulator.template.rule
 
 import com.exactpro.th2.common.message.addField
-import com.exactpro.th2.common.message.copyField
+import com.exactpro.th2.common.message.addFields
 import com.exactpro.th2.common.message.setMetadata
 import com.exactpro.th2.infra.grpc.Direction
 import com.exactpro.th2.infra.grpc.Message
@@ -45,7 +45,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                 addField("CumQty", "0")
                 addField("TradingParty", null)
                 addField("TransactTime", LocalDateTime.now().toString())
-                copyField(incomeMessage, "Side", "LeavesQty", "ClOrdID", "SecurityID", "SecurityIDSource", "OrdType", "OrderQty")
+                addFields(incomeMessage, "Side", "LeavesQty", "ClOrdID", "SecurityID", "SecurityIDSource", "OrdType", "OrderQty")
                 setMetadata("ExecutionReport", Direction.FIRST, "sessionAlias")
                 //setMessageType("ExecutionReport")
             }.build()
