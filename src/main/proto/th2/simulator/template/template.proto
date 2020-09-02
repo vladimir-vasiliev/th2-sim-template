@@ -29,6 +29,6 @@ message TemplateFixCreate {
 }
 
 service TemplateSimulatorService {
-    rpc createRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
-    rpc createKotlinRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
+    rpc createRuleFIX(TemplateFixCreate) returns (th2.RuleID) {}
+    rpc createKotlinRuleFIX(TemplateFixCreate) returns (th2.RuleID) {}
 }
