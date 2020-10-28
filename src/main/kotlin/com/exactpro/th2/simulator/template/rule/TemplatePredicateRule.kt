@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 package com.exactpro.th2.simulator.template.rule
 
+import com.exactpro.th2.common.grpc.Message
+import com.exactpro.th2.common.message.addField
+import com.exactpro.th2.common.message.message
 import com.exactpro.th2.common.value.getBigDecimal
 import com.exactpro.th2.common.value.getInt
 import com.exactpro.th2.common.value.getString
-import com.exactpro.th2.infra.grpc.Message
-import com.exactpro.th2.simulator.rule.impl.MessagePredicateRule
+import com.exactpro.th2.sim.rule.impl.MessagePredicateRule
 import java.math.BigDecimal
-import java.util.Collections
 import java.util.function.Predicate
 
-class KotlinPredicateRule : MessagePredicateRule() {
+class TemplatePredicateRule : MessagePredicateRule() {
     init {
         init({mt -> mt == "NewOrderSingle" },
             mapOf(
@@ -35,7 +35,7 @@ class KotlinPredicateRule : MessagePredicateRule() {
             ))
     }
 
-    override fun handleTriggered(p0: Message): MutableList<Message> {
-        return Collections.emptyList()
-    }
+    override fun handleTriggered(p0: Message): MutableList<Message> = arrayListOf(
+        message("ExecutionReport").addField("ClOrdID", "orderId").build()
+    )
 }

@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 package com.exactpro.th2.simulator.template.rule
 
-import com.exactpro.th2.common.message.addField
+import com.exactpro.th2.common.grpc.Message
+import com.exactpro.th2.common.grpc.Value
 import com.exactpro.th2.common.message.addFields
-import com.exactpro.th2.common.message.setMetadata
-import com.exactpro.th2.infra.grpc.Direction
-import com.exactpro.th2.infra.grpc.Message
-import com.exactpro.th2.infra.grpc.Value
-import com.exactpro.th2.simulator.rule.impl.MessageCompareRule
+import com.exactpro.th2.common.message.copyFields
+import com.exactpro.th2.common.message.message
+import com.exactpro.th2.sim.rule.impl.MessageCompareRule
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
-class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
+class TemplateFixRule(field: Map<String, Value>) : MessageCompareRule() {
 
     private var orderId = AtomicInteger(0)
     private var execId = AtomicInteger(0)
@@ -37,17 +35,15 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
 
     override fun handleTriggered(incomeMessage: Message): MutableList<Message> =
         arrayListOf(
-            Message.newBuilder().apply {
-                addField("OrderID", orderId.incrementAndGet())
-                addField("ExecID", execId.incrementAndGet())
-                addField("ExecType", "2")
-                addField("OrdStatus", "0")
-                addField("CumQty", "0")
-                addField("TradingParty", null)
-                addField("TransactTime", LocalDateTime.now().toString())
-                addFields(incomeMessage, "Side", "LeavesQty", "ClOrdID", "SecurityID", "SecurityIDSource", "OrdType", "OrderQty")
-                setMetadata("ExecutionReport", Direction.FIRST, "sessionAlias")
-                //setMessageType("ExecutionReport")
-            }.build()
+            message("ExecutionReport").addFields(
+                "OrderID", orderId.incrementAndGet(),
+                "ExecID", execId.incrementAndGet(),
+                "ExecType", "2",
+                "OrdStatus", "0",
+                "CumQty", "0",
+                "TradingParty", null,
+                "TransactTime", LocalDateTime.now().toString())
+                .copyFields(incomeMessage, "Side", "LeavesQty", "ClOrdID", "SecurityID", "SecurityIDSource", "OrdType", "OrderQty")
+                .build()
         )
 }
