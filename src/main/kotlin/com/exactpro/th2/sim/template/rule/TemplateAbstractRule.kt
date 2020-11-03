@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.exactpro.th2.simulator.template.rule
+package com.exactpro.th2.sim.template.rule
 
 import com.exactpro.th2.common.grpc.Message
 import com.exactpro.th2.common.message.addField
+import com.exactpro.th2.common.message.copyFields
+import com.exactpro.th2.common.message.getField
 import com.exactpro.th2.common.message.message
-import com.exactpro.th2.common.value.getBigDecimal
 import com.exactpro.th2.common.value.getInt
-import com.exactpro.th2.common.value.getString
-import com.exactpro.th2.sim.rule.impl.MessagePredicateRule
-import java.math.BigDecimal
-import java.util.function.Predicate
+import com.exactpro.th2.sim.rule.impl.AbstractRule
 
-class TemplatePredicateRule : MessagePredicateRule() {
-    init {
-        init({mt -> mt == "NewOrderSingle" },
-            mapOf(
-                "field" to Predicate { value -> value.getInt()!! > 0},
-                "field2" to Predicate { value -> value.getString()?.matches(Regex("A*")) ?: false},
-                "field3" to Predicate {value -> value.getBigDecimal()?.compareTo(BigDecimal(12))!! >= 0 }
-            ))
+class TemplateAbstractRule : AbstractRule() {
+
+    override fun checkTriggered(input: Message): Boolean {
+        input.getField("field1")?.getInt()?.also { a ->
+            input.getField("field2")?.getInt()?.also { b ->
+                return a + b > 80
+            }
+        }
+
+        return false
     }
 
-    override fun handleTriggered(p0: Message): MutableList<Message> = arrayListOf(
-        message("ExecutionReport").addField("ClOrdID", "orderId").build()
-    )
+    override fun handleTriggered(p0: Message): MutableList<Message> {
+        return arrayListOf(message("ExecutionReport").copyFields(p0, "field1", "field3").addField("field4", "value").build())
+    }
+
+
+
 }

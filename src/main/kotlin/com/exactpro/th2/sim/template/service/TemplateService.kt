@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.exactpro.th2.simulator.template.service
+package com.exactpro.th2.sim.template.service
 
 import com.exactpro.th2.sim.ISimulator
 import com.exactpro.th2.sim.ISimulatorPart
@@ -21,7 +21,7 @@ import com.exactpro.th2.sim.grpc.RuleID
 import com.exactpro.th2.sim.template.grpc.TemplateFixRuleCreate
 import com.exactpro.th2.sim.template.grpc.TemplateSimulatorServiceGrpc
 import com.exactpro.th2.sim.util.ServiceUtils
-import com.exactpro.th2.simulator.template.rule.TemplateFixRule
+import com.exactpro.th2.sim.template.rule.TemplateFixRule
 import io.grpc.stub.StreamObserver
 
 class TemplateService : TemplateSimulatorServiceGrpc.TemplateSimulatorServiceImplBase(), ISimulatorPart {

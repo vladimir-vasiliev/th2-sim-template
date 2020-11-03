@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.exactpro.th2.simulator.template.rule
+package com.exactpro.th2.sim.template.rule
 
 import com.exactpro.th2.common.grpc.Message
 import com.exactpro.th2.common.grpc.Value

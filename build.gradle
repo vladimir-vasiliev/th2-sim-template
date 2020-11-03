@@ -54,7 +54,7 @@ dependencies {
     implementation "com.exactpro.th2:sim"
     implementation "com.exactpro.th2:common"
     implementation "com.exactpro.th2:grpc-sim"
-    implementation "com.exactpro.th2:grpc-sim-template"
+    implementation "com.exactpro.th2:grpc-sim-${grpc_suffix}${grpc_version.isEmpty() ? "" : ":${grpc_version}"}"
     implementation "com.exactpro.th2:grpc-common"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"

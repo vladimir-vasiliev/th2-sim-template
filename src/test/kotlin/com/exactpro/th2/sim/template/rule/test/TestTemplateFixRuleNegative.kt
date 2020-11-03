@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.exactpro.th2.simulator.template.rule.test
+package com.exactpro.th2.sim.template.rule.test
 
 import com.exactpro.th2.common.grpc.MessageBatch
 import com.exactpro.th2.common.message.addFields
@@ -21,17 +21,16 @@ import com.exactpro.th2.common.message.message
 import com.exactpro.th2.common.value.toValue
 import com.exactpro.th2.sim.ISimulator
 import com.exactpro.th2.sim.rule.test.AbstractRuleTest
-import com.exactpro.th2.simulator.template.rule.TemplateFixRule
+import com.exactpro.th2.sim.template.rule.TemplateFixRule
 
-class TestSomeRules : AbstractRuleTest() {
-
+class TestTemplateFixRuleNegative : AbstractRuleTest() {
 
     override fun createMessageBatch(index: Int): MessageBatch? = MessageBatch.newBuilder().addMessages(message("NewOrderSingle").apply {
         if (index % 4 == 0) {
-            addFields("ClOrdId", "ord_1")
+            addFields("ClOrdId", "order_id_1", "1", "1", "2", "2")
         }
         else {
-            addFields("ClOrdId", "ord_2")
+            addFields("ClOrdId", "order_id_2")
         }
     } .build()).build()
 
@@ -39,8 +38,7 @@ class TestSomeRules : AbstractRuleTest() {
 
     override fun addRules(simulator: ISimulator, sessionAlias: String) {
         simulator.apply {
-            addRule(TemplateFixRule(mapOf("ClOrdId" to "ord_1".toValue())), "empty", false, false)
-            addRule(TemplateFixRule(mapOf("ClOrdId" to "ord_2".toValue())), "empty", false, false)
+            addRule(TemplateFixRule(mapOf("ClOrdId" to "order_id_2".toValue())), sessionAlias)
         }
     }
 
@@ -48,4 +46,5 @@ class TestSomeRules : AbstractRuleTest() {
 
     override fun checkResultMessages(index: Int, messageBatches: MutableList<MessageBatch>): Boolean = (index % 4 != 0 || messageBatches.size == 1 && messageBatches[0].messagesCount == 1 && messageBatches[0].messagesList[0].metadata.messageType == "ExecutionReport")
 
+    override fun isNegativeTest(): Boolean = true
 }
