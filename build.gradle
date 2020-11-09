@@ -107,6 +107,7 @@ docker {
     copySpec.from(tarTree("$buildDir/distributions/${applicationName}.tar"))
 }
 
+applicationName = 'service'
 
 sourceCompatibility = 11
 targetCompatibility = 11

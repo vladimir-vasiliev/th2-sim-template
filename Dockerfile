@@ -1,13 +1,17 @@
-FROM openjdk:12-alpine
+FROM gradle:6.6-jdk11 AS build
+ARG release_version
 
-ENV GRPC_PORT=8080 \
-    RABBITMQ_HOST=host \
-    RABBITMQ_PORT=7777 \
-    RABBITMQ_VHOST=vhost \
-    RABBITMQ_USER=user \
-    RABBITMQ_PASS=password \
-    TH2_CONNECTIVITY_ADDRESSES={}
-
-WORKDIR /home
 COPY ./ .
-ENTRYPOINT ["/home/th2-simulator/bin/th2-simulator-template-project"]
+RUN gradle --no-daemon clean build dockerPrepare
+
+FROM openjdk:12-alpine
+ENV RABBITMQ_HOST=rabbitmq \
+    RABBITMQ_PORT=5672 \
+    RABBITMQ_USER=guest \
+    RABBITMQ_PASS=guest \
+    RABBITMQ_VHOST=th2 \
+    GRPC_PORT=8080 \
+    DISABLE_GRPC=false
+WORKDIR /home
+COPY --from=build /home/gradle/build/docker .
+ENTRYPOINT ["/home/service/bin/service"]
