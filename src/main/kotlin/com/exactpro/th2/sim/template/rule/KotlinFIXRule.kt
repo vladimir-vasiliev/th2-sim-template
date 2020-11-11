@@ -16,6 +16,7 @@
 
 package com.exactpro.th2.simulator.template.rule
 
+import com.exactpro.th2.common.grpc.Direction
 import com.exactpro.th2.common.grpc.Message
 import com.exactpro.th2.common.grpc.Value
 import com.exactpro.th2.common.message.*
@@ -40,7 +41,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                     val rej = message("Reject").addFields(
                             "RefTagID", "453",
                             "RefMsgType", "D",
-//                            "RefSeqNum", incomeMessage.getField("BeginString")?.getMessage()?.getField("MsgSeqNum"),
+                            "RefSeqNum", incomeMessage.getField("BeginString")?.getMessage()?.getField("MsgSeqNum"),
                             "Text", "Simulating reject message",
                             "SessionRejectReason", "1"
                     )
@@ -57,38 +58,143 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             "OrdType",
                             "OrderQty",
                             "TradingParty",
-                            "TimeInForce"
+                            "TimeInForce",
+                            "OrderCapacity",
+                            "AccountType"
                     )
                     .addFields(
                             "OrderID", orderId.incrementAndGet(),
                             "ExecID", execId.incrementAndGet(),
                             "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
-                            "Text", "This is simulated Execution Report for Buy Side"
+                            "Text", "This is simulated Execution Report for Buy Side",
+                            "ExecType", "0",
+                            "OrdStatus", "0"
                     )
                     result.add(FixER1.build())
                 }
-                "2" -> {val FixER1 = message("ExecutionReport")
+                "2" -> {val trader1_Order2_fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
                         .copyFields(incomeMessage,
-                            "Side",
-                                "ClOrdID",
                                 "SecurityID",
                                 "SecurityIDSource",
                                 "OrdType",
-                                "OrderQty",
-                                "TradingParty",
-                                "TimeInForce"
+//                                "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
+                                "OrderCapacity",
+                                "AccountType"
                         )
                         .addFields(
+                                "TimeInForce", "0",
+                                "ExecType", "F",
+                                "OrdStatus", "2",
+                                "CumQty", "10",
+                                "LastPx", "56",
+                                "Side", "1",
+                                "OrderQty", "10",
+                                "ClOrdID", "2222",
                                 "OrderID", orderId.incrementAndGet(),
                                 "ExecID", execId.incrementAndGet(),
-                                "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                "Text", "This is simulated Execution Report for Sell Side"
+                                "LeavesQty", "0",
+                                "Text", "This is simulated Execution Report for Buy Side"
                     )
-                    result.add(FixER1.build())
+                    result.add(trader1_Order2_fix1.build())
+                    val trader1_Order1_fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
+                            .copyFields(incomeMessage,
+                                  "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+//                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "TimeInForce", "0",
+                                    "ExecType", "F",
+                                    "OrdStatus", "2",
+                                    "CumQty", "30",
+                                    "LastPx", "55",
+                                    "Side", "1",
+                                    "OrderQty", "30",
+                                    "ClOrdID", "1111",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "0",
+                                    "Text", "This is simulated Execution Report for Buy Side"
+                            )
+                    result.add(trader1_Order1_fix1.build())
+                    val trader2_Order3_fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                            .copyFields(incomeMessage,
+                                    "TimeInForce",
+                                    "Side",
+                                    "ClOrdID",
+                                    "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "ExecType", "F",
+                                    "OrdStatus", "1",
+                                    "CumQty", "10",
+                                    "OrderQty", "100",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "90",
+                                    "Text", "This is simulated Execution Report for Sell Side"
+                            )
+                    result.add(trader2_Order3_fix1.build())
+                    val trader2_fix2_Order3 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                            .copyFields(incomeMessage,
+                                    "TimeInForce",
+                                    "Side",
+                                    "ClOrdID",
+                                    "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "ExecType", "F",
+                                    "OrdStatus", "1",
+                                    "CumQty", "40",
+                                    "OrderQty", "100",
+                                    "ClOrdID", "1234",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "60",
+                                    "Text", "This is simulated Execution Report for Sell Side"
+                            )
+                    result.add(trader2_fix2_Order3.build())
+                    val trader2_fix3_Order3 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                            .copyFields(incomeMessage,
+                                    "TimeInForce",
+                                    "Side",
+                                    "ClOrdID",
+                                    "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "ExecType", "C",
+                                    "OrdStatus", "C",
+                                    "CumQty", "40",
+                                    "OrderQty", "100",
+                                    "ClOrdID", "1234",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "0",
+                                    "Text", "This is simulated Execution Report for Sell Side"
+                            )
+                    result.add(trader2_fix3_Order3.build())
                 }
             }
         }
-        return result;
+        return result
     }
 }
 
