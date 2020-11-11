@@ -28,8 +28,10 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
 
+    companion object{
     private var orderId = AtomicInteger(0)
     private var execId = AtomicInteger(0)
+    }
 
     init {
         init("NewOrderSingle", field)
@@ -37,6 +39,63 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
     //.getString("Side")?.isBlank() == true){  //null
     override fun handleTriggered(incomeMessage: Message): MutableList<Message> {
         val result = ArrayList<Message>()
+        val repeating1 = message().addFields("NoPartyIDs", listOf(
+                message().addFields(
+                        "PartyRole", "76",
+                        "PartyID", "DEMO_CONN1",
+                        "PartyIDSource", "D"
+                ),
+                message().addFields(
+                        "PartyRole", "17",
+                        "PartyID", "DEMOFIRM2",
+                        "PartyIDSource", "D"
+                ),
+                message().addFields(
+                        "PartyRole", "3",
+                        "PartyID", "0",
+                        "PartyIDSource", "P"
+                ),
+                message().addFields(
+                        "PartyRole", "122",
+                        "PartyID", "0",
+                        "PartyIDSource", "P"
+                ),
+                message().addFields(
+                        "PartyRole", "12",
+                        "PartyID", "3",
+                        "PartyIDSource", "P"
+                )
+            )
+        )
+        val repeating2 = message().addFields("NoPartyIDs", listOf(
+                message().addFields(
+                        "PartyRole", "76",
+                        "PartyID", "DEMO_CONN2",
+                        "PartyIDSource", "D"
+                ),
+                message().addFields(
+                        "PartyRole", "17",
+                        "PartyID", "DEMOFIRM1",
+                        "PartyIDSource", "D"
+                ),
+                message().addFields(
+                        "PartyRole", "3",
+                        "PartyID", "0",
+                        "PartyIDSource", "P"
+                ),
+                message().addFields(
+                        "PartyRole", "122",
+                        "PartyID", "0",
+                        "PartyIDSource", "P"
+                ),
+                message().addFields(
+                        "PartyRole", "12",
+                        "PartyID", "3",
+                        "PartyIDSource", "P"
+                )
+            )
+        )
+
         if (!incomeMessage.containsFields("Side")) {
                     val rej = message("Reject").addFields(
                             "RefTagID", "453",
@@ -49,7 +108,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                 }
         else {
             when (incomeMessage.getString("Side")) {
-                "1" -> {val FixER1 = message("ExecutionReport")
+                "1" -> {val erNew = message("ExecutionReport")
                     .copyFields(incomeMessage,  // fields from NewOrder
                             "Side",
                             "ClOrdID",
@@ -70,18 +129,18 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             "ExecType", "0",
                             "OrdStatus", "0"
                     )
-                    result.add(FixER1.build())
+                    result.add(erNew.build())
                 }
                 "2" -> {val trader1_Order2_fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
                         .copyFields(incomeMessage,
                                 "SecurityID",
                                 "SecurityIDSource",
                                 "OrdType",
-//                                "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
                                 "OrderCapacity",
                                 "AccountType"
                         )
                         .addFields(
+                                "TradingParty", repeating1,
                                 "TimeInForce", "0",
                                 "ExecType", "F",
                                 "OrdStatus", "2",
@@ -101,11 +160,11 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                   "SecurityID",
                                     "SecurityIDSource",
                                     "OrdType",
-//                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
                                     "OrderCapacity",
                                     "AccountType"
                             )
                             .addFields(
+                                    "TradingParty", repeating1,
                                     "TimeInForce", "0",
                                     "ExecType", "F",
                                     "OrdStatus", "2",
@@ -128,11 +187,11 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "SecurityID",
                                     "SecurityIDSource",
                                     "OrdType",
-                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
                                     "OrderCapacity",
                                     "AccountType"
                             )
                             .addFields(
+                                    "TradingParty", repeating2,
                                     "ExecType", "F",
                                     "OrdStatus", "1",
                                     "CumQty", "10",
@@ -143,7 +202,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
                     result.add(trader2_Order3_fix1.build())
-                    val trader2_fix2_Order3 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                    val trader2_Order3_fix2 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
@@ -151,11 +210,11 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "SecurityID",
                                     "SecurityIDSource",
                                     "OrdType",
-                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
                                     "OrderCapacity",
                                     "AccountType"
                             )
                             .addFields(
+                                    "TradingParty", repeating2,
                                     "ExecType", "F",
                                     "OrdStatus", "1",
                                     "CumQty", "40",
@@ -166,8 +225,8 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "LeavesQty", "60",
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
-                    result.add(trader2_fix2_Order3.build())
-                    val trader2_fix3_Order3 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                    result.add(trader2_Order3_fix2.build())
+                    val trader2_Order3_fix3 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
@@ -175,7 +234,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "SecurityID",
                                     "SecurityIDSource",
                                     "OrdType",
-                                    "TradingParty", //TODO add counterparty "PartyRole", "17", "PartyID", "ARFQ02", "PartyIDSource", "D"
+                                    "TradingParty",
                                     "OrderCapacity",
                                     "AccountType"
                             )
@@ -190,7 +249,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "LeavesQty", "0",
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
-                    result.add(trader2_fix3_Order3.build())
+                    result.add(trader2_Order3_fix3.build())
                 }
             }
         }
