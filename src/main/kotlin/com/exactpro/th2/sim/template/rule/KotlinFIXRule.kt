@@ -42,7 +42,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
         val repeating1 = message().addFields("NoPartyIDs", listOf(
                 message().addFields(
                         "PartyRole", "76",
-                        "PartyID", "DEMO_CONN1",
+                        "PartyID", "DEMO-CONN1",
                         "PartyIDSource", "D"
                 ),
                 message().addFields(
@@ -70,7 +70,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
         val repeating2 = message().addFields("NoPartyIDs", listOf(
                 message().addFields(
                         "PartyRole", "76",
-                        "PartyID", "DEMO_CONN2",
+                        "PartyID", "DEMO-CONN2",
                         "PartyIDSource", "D"
                 ),
                 message().addFields(
@@ -108,9 +108,11 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                 }
         else {
             when (incomeMessage.getString("Side")) {
-                "1" -> {val erNew = message("ExecutionReport")
+                "1" -> {val fixNew = message("ExecutionReport")
                     .copyFields(incomeMessage,  // fields from NewOrder
                             "Side",
+                            "Price",
+                            "CumQty",
                             "ClOrdID",
                             "SecurityID",
                             "SecurityIDSource",
@@ -127,9 +129,36 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
                             "Text", "This is simulated Execution Report for Buy Side",
                             "ExecType", "0",
-                            "OrdStatus", "0"
+                            "OrdStatus", "0",
+                            "CumQty", "0"
                     )
-                    result.add(erNew.build())
+                    result.add(fixNew.build())
+// DropCopy
+                    val dcNew = message("ExecutionReport", Direction.FIRST, "demo-dc1")
+                            .copyFields(incomeMessage,  // fields from NewOrder
+                                    "Side",
+                                    "Price",
+                                    "CumQty",
+                                    "ClOrdID",
+                                    "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "OrderQty",
+                                    "TradingParty",
+                                    "TimeInForce",
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                    "Text", "This is simulated Execution Report for Buy Side",
+                                    "ExecType", "0",
+                                    "OrdStatus", "0",
+                                    "CumQty", "0"
+                            )
+                    result.add(dcNew.build())
                 }
                 "2" -> {val trader1_Order2_fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
                         .copyFields(incomeMessage,
@@ -145,6 +174,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                 "ExecType", "F",
                                 "OrdStatus", "2",
                                 "CumQty", "10",
+                                "Price", "56",
                                 "LastPx", "56",
                                 "Side", "1",
                                 "OrderQty", "10",
@@ -169,6 +199,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "ExecType", "F",
                                     "OrdStatus", "2",
                                     "CumQty", "30",
+                                    "Price", "55",
                                     "LastPx", "55",
                                     "Side", "1",
                                     "OrderQty", "30",
@@ -250,6 +281,126 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
                     result.add(trader2_Order3_fix3.build())
+//DropCopy
+                    val trader1_Order2_dc1 = message("ExecutionReport", Direction.FIRST, "demo-dc1")
+                        .copyFields(incomeMessage,
+                                "SecurityID",
+                                "SecurityIDSource",
+                                "OrdType",
+                                "OrderCapacity",
+                                "AccountType"
+                        )
+                        .addFields(
+                                "TradingParty", repeating1,
+                                "TimeInForce", "0",
+                                "ExecType", "F",
+                                "OrdStatus", "2",
+                                "CumQty", "10",
+                                "LastPx", "56",
+                                "Side", "1",
+                                "OrderQty", "10",
+                                "ClOrdID", "2222",
+                                "OrderID", orderId.incrementAndGet(),
+                                "ExecID", execId.incrementAndGet(),
+                                "LeavesQty", "0",
+                                "Text", "This is simulated Execution Report for Buy Side"
+                    )
+                    result.add(trader1_Order2_dc1.build())
+                    val trader1_Order1_dc1 = message("ExecutionReport", Direction.FIRST, "demo-dc1")
+                            .copyFields(incomeMessage,
+                                  "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "TradingParty", repeating1,
+                                    "TimeInForce", "0",
+                                    "ExecType", "F",
+                                    "OrdStatus", "2",
+                                    "CumQty", "30",
+                                    "LastPx", "55",
+                                    "Side", "1",
+                                    "OrderQty", "30",
+                                    "ClOrdID", "1111",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "0",
+                                    "Text", "This is simulated Execution Report for Buy Side"
+                            )
+                    result.add(trader1_Order1_dc1.build())
+                    val trader2_Order3_dc1 = message("ExecutionReport", Direction.FIRST, "demo-dc2")
+                            .copyFields(incomeMessage,
+                                    "TimeInForce",
+                                    "Side",
+                                    "ClOrdID",
+                                    "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "TradingParty", repeating2,
+                                    "ExecType", "F",
+                                    "OrdStatus", "1",
+                                    "CumQty", "10",
+                                    "OrderQty", "100",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "90",
+                                    "Text", "This is simulated Execution Report for Sell Side"
+                            )
+                    result.add(trader2_Order3_dc1.build())
+                    val trader2_Order3_dc2 = message("ExecutionReport", Direction.FIRST, "demo-dc2")
+                            .copyFields(incomeMessage,
+                                    "TimeInForce",
+                                    "Side",
+                                    "ClOrdID",
+                                    "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "TradingParty", repeating2,
+                                    "ExecType", "F",
+                                    "OrdStatus", "1",
+                                    "CumQty", "40",
+                                    "OrderQty", "100",
+                                    "ClOrdID", "1234",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "60",
+                                    "Text", "This is simulated Execution Report for Sell Side"
+                            )
+                    result.add(trader2_Order3_dc2.build())
+                    val trader2_Order3_dc3 = message("ExecutionReport", Direction.FIRST, "demo-dc2")
+                            .copyFields(incomeMessage,
+                                    "TimeInForce",
+                                    "Side",
+                                    "ClOrdID",
+                                    "SecurityID",
+                                    "SecurityIDSource",
+                                    "OrdType",
+                                    "TradingParty",
+                                    "OrderCapacity",
+                                    "AccountType"
+                            )
+                            .addFields(
+                                    "ExecType", "C",
+                                    "OrdStatus", "C",
+                                    "CumQty", "40",
+                                    "OrderQty", "100",
+                                    "ClOrdID", "1234",
+                                    "OrderID", orderId.incrementAndGet(),
+                                    "ExecID", execId.incrementAndGet(),
+                                    "LeavesQty", "0",
+                                    "Text", "This is simulated Execution Report for Sell Side"
+                            )
+                    result.add(trader2_Order3_dc3.build())
                 }
             }
         }
