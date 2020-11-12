@@ -33,12 +33,12 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
     private var orderId = AtomicInteger(0)
     private var execId = AtomicInteger(0)
     private var incomeMsgList = arrayListOf<Message>()
+    private var ordIdList = arrayListOf<Int>()
     }
 
     init {
         init("NewOrderSingle", field)
     }
-    //.getString("Side")?.isBlank() == true){  //null
     override fun handleTriggered(incomeMessage: Message): MutableList<Message> {
         incomeMsgList.add(incomeMessage)
         while (incomeMsgList.size > 10) {
@@ -54,7 +54,12 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
         val order2ClOdrID = incomeMsgList.get(incomeMsgList.size - 2).getField("ClOdrID")!!.getString()
         val order2Price = incomeMsgList.get(incomeMsgList.size - 2).getField("Price")!!.getString()
         val order2Qty = incomeMsgList.get(incomeMsgList.size - 2).getField("OrderQty")!!.getString()
+        val ordId1 = orderId.incrementAndGet()
 
+        ordIdList.add(ordId1)
+        while (ordIdList.size > 3) {
+            ordIdList.removeAt(0)
+        }
         val result = ArrayList<Message>()
         val repeating1 = message().addFields("NoPartyIDs", listOf(
                 message().addFields(
@@ -141,7 +146,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             "AccountType"
                     )
                     .addFields(
-                            "OrderID", orderId.incrementAndGet(),
+                            "OrderID", ordId1,
                             "ExecID", execId.incrementAndGet(),
                             "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
                             "Text", "This is simulated Execution Report for Buy Side",
@@ -320,7 +325,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                 "Side", "1",
                                 "LeavesQty", "0",
                                 "ClOrdID", order2ClOdrID,
-                                "OrderID", orderId.incrementAndGet(),
+                                "OrderID", ordIdList.get(ordIdList.size - 2),
                                 "ExecID", execId.incrementAndGet(),
                                 "Text", "This is simulated Execution Report for Buy Side"
                     )
@@ -345,7 +350,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Side", "1",
                                     "ClOrdID", order1ClOdrID,
                                     "LeavesQty", "0",
-                                    "OrderID", orderId.incrementAndGet(),
+                                    "OrderID", ordIdList.get(ordIdList.size - 3),
                                     "ExecID", execId.incrementAndGet(),
                                     "Text", "This is simulated Execution Report for Buy Side"
                             )
@@ -369,7 +374,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "CumQty", cumQty1,
                                     "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
                                     "LeavesQty", leavesQty1,
-                                    "OrderID", orderId.incrementAndGet(),
+                                    "OrderID", ordId1,
                                     "ExecID", execId.incrementAndGet(),
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
@@ -393,7 +398,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "CumQty", cumQty1+cumQty2,
                                     "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
                                     "LeavesQty", leavesQty2,
-                                    "OrderID", orderId.incrementAndGet(),
+                                    "OrderID", ordId1,
                                     "ExecID", execId.incrementAndGet(),
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
@@ -417,7 +422,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "CumQty", cumQty1+cumQty2,
                                     "LeavesQty", "0",
                                     "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                    "OrderID", orderId.incrementAndGet(),
+                                    "OrderID", ordId1,
                                     "ExecID", execId.incrementAndGet(),
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
