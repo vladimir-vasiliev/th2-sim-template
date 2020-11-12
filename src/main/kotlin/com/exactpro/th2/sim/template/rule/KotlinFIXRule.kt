@@ -31,6 +31,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
     companion object{
     private var orderId = AtomicInteger(0)
     private var execId = AtomicInteger(0)
+    private var incomeMsgList = arrayListOf<Message>()
     }
 
     init {
@@ -38,6 +39,10 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
     }
     //.getString("Side")?.isBlank() == true){  //null
     override fun handleTriggered(incomeMessage: Message): MutableList<Message> {
+//        incomeMsgList.add(incomeMessage)
+//        while (incomeMsgList.size > 10) {
+//            incomeMsgList.removeAt(0)
+//        }
         val result = ArrayList<Message>()
         val repeating1 = message().addFields("NoPartyIDs", listOf(
                 message().addFields(
@@ -250,7 +255,6 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "OrdStatus", "1",
                                     "CumQty", "40",
                                     "OrderQty", "100",
-                                    "ClOrdID", "1234",
                                     "OrderID", orderId.incrementAndGet(),
                                     "ExecID", execId.incrementAndGet(),
                                     "LeavesQty", "60",
@@ -274,7 +278,6 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "OrdStatus", "C",
                                     "CumQty", "40",
                                     "OrderQty", "100",
-                                    "ClOrdID", "1234",
                                     "OrderID", orderId.incrementAndGet(),
                                     "ExecID", execId.incrementAndGet(),
                                     "LeavesQty", "0",
