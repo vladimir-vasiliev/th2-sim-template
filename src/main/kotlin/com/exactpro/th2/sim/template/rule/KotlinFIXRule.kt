@@ -41,25 +41,25 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
     }
     override fun handleTriggered(incomeMessage: Message): MutableList<Message> {
         incomeMsgList.add(incomeMessage)
-        while (incomeMsgList.size > 10) {
+        while (incomeMsgList.size > 3) {
             incomeMsgList.removeAt(0)
         }
-        val cumQty1 = incomeMsgList.get(incomeMsgList.size - 2).getField("OrderQty")!!.getInt()!!
-        val cumQty2 = incomeMsgList.get(incomeMsgList.size - 3).getField("OrderQty")!!.getInt()!!
-        val leavesQty1 = incomeMessage.getField("OrderQty")!!.getInt()!! - cumQty1
-        val leavesQty2 = incomeMessage.getField("OrderQty")!!.getInt()!! - (cumQty1 + cumQty2)
-        val order1ClOdrID = incomeMsgList.get(incomeMsgList.size - 3).getField("ClOdrID")!!.getString()
-        val order1Price = incomeMsgList.get(incomeMsgList.size - 3).getField("Price")!!.getString()
-        val order1Qty = incomeMsgList.get(incomeMsgList.size - 3).getField("OrderQty")!!.getString()
-        val order2ClOdrID = incomeMsgList.get(incomeMsgList.size - 2).getField("ClOdrID")!!.getString()
-        val order2Price = incomeMsgList.get(incomeMsgList.size - 2).getField("Price")!!.getString()
-        val order2Qty = incomeMsgList.get(incomeMsgList.size - 2).getField("OrderQty")!!.getString()
         val ordId1 = orderId.incrementAndGet()
 
         ordIdList.add(ordId1)
         while (ordIdList.size > 3) {
             ordIdList.removeAt(0)
         }
+        val cumQty1 = incomeMsgList[1].getField("OrderQty")!!.getInt()!!
+        val cumQty2 = incomeMsgList[0].getField("OrderQty")!!.getInt()!!
+        val leavesQty1 = incomeMessage.getField("OrderQty")!!.getInt()!! - cumQty1
+        val leavesQty2 = incomeMessage.getField("OrderQty")!!.getInt()!! - (cumQty1 + cumQty2)
+        val order1ClOdrID = incomeMsgList[0].getField("ClOdrID")!!.getString()
+        val order1Price = incomeMsgList[0].getField("Price")!!.getString()
+        val order1Qty = incomeMsgList[0].getField("OrderQty")!!.getString()
+        val order2ClOdrID = incomeMsgList[1].getField("ClOdrID")!!.getString()
+        val order2Price = incomeMsgList[1].getField("Price")!!.getString()
+        val order2Qty = incomeMsgList[1].getField("OrderQty")!!.getString()
         val result = ArrayList<Message>()
         val repeating1 = message().addFields("NoPartyIDs", listOf(
                 message().addFields(
@@ -325,7 +325,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                 "Side", "1",
                                 "LeavesQty", "0",
                                 "ClOrdID", order2ClOdrID,
-                                "OrderID", ordIdList.get(ordIdList.size - 2),
+                                "OrderID", ordIdList[1],
                                 "ExecID", execId.incrementAndGet(),
                                 "Text", "This is simulated Execution Report for Buy Side"
                     )
@@ -350,7 +350,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Side", "1",
                                     "ClOrdID", order1ClOdrID,
                                     "LeavesQty", "0",
-                                    "OrderID", ordIdList.get(ordIdList.size - 3),
+                                    "OrderID", ordIdList[0],
                                     "ExecID", execId.incrementAndGet(),
                                     "Text", "This is simulated Execution Report for Buy Side"
                             )
