@@ -183,7 +183,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             )
                     )
                     )
-                    val trader1Order2fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
+                    val trader1Order2fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
                         .copyFields(incomeMessage,
                                 "SecurityID",
                                 "SecurityIDSource",
@@ -208,7 +208,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                 "Text", "This is simulated Execution Report for Buy Side"
                     )
                     result.add(trader1Order2fix1.build())
-                    val trader1Order1fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
+                    val trader1Order1fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
                             .copyFields(incomeMessage,
                                   "SecurityID",
                                     "SecurityIDSource",
@@ -233,7 +233,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Buy Side"
                             )
                     result.add(trader1Order1fix1.build())
-                    val trader2Order3fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                    val trader2Order3fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
@@ -257,7 +257,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
                     result.add(trader2Order3fix1.build())
-                    val trader2Order3fix2 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                    val trader2Order3fix2 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
@@ -281,7 +281,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
                     result.add(trader2Order3fix2.build())
-                    val trader2Order3fix3 = message("ExecutionReport", Direction.FIRST, "demo-conn2")
+                    val trader2Order3fix3 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
@@ -306,7 +306,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             )
                     result.add(trader2Order3fix3.build())
 //DropCopy
-                    val trader1Order2dc1 = message("ExecutionReport", Direction.FIRST, "demo-dc1")
+                    val trader1Order2dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
                         .copyFields(incomeMessage,
                                 "SecurityID",
                                 "SecurityIDSource",
@@ -331,7 +331,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                 "Text", "This is simulated Execution Report for Buy Side"
                     )
                     result.add(trader1Order2dc1.build())
-                    val trader1Order1dc1 = message("ExecutionReport", Direction.FIRST, "demo-dc1")
+                    val trader1Order1dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
                             .copyFields(incomeMessage,
                                   "SecurityID",
                                     "SecurityIDSource",
@@ -356,7 +356,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Buy Side"
                             )
                     result.add(trader1Order1dc1.build())
-                    val trader2Order3dc1 = message("ExecutionReport", Direction.FIRST, "demo-dc2")
+                    val trader2Order3dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
@@ -380,7 +380,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
                     result.add(trader2Order3dc1.build())
-                    val trader2Order3dc2 = message("ExecutionReport", Direction.FIRST, "demo-dc2")
+                    val trader2Order3dc2 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
@@ -404,7 +404,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                     "Text", "This is simulated Execution Report for Sell Side"
                             )
                     result.add(trader2Order3dc2.build())
-                    val trader2Order3dc3 = message("ExecutionReport", Direction.FIRST, "demo-dc2")
+                    val trader2Order3dc3 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
                             .copyFields(incomeMessage,
                                     "TimeInForce",
                                     "Side",
