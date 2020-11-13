@@ -50,73 +50,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
         while (ordIdList.size > 3) {
             ordIdList.removeAt(0)
         }
-        val cumQty1 = incomeMsgList[1].getField("OrderQty")!!.getInt()!!
-        val cumQty2 = incomeMsgList[0].getField("OrderQty")!!.getInt()!!
-        val leavesQty1 = incomeMessage.getField("OrderQty")!!.getInt()!! - cumQty1
-        val leavesQty2 = incomeMessage.getField("OrderQty")!!.getInt()!! - (cumQty1 + cumQty2)
-        val order1ClOdrID = incomeMsgList[0].getField("ClOdrID")!!.getString()
-        val order1Price = incomeMsgList[0].getField("Price")!!.getString()
-        val order1Qty = incomeMsgList[0].getField("OrderQty")!!.getString()
-        val order2ClOdrID = incomeMsgList[1].getField("ClOdrID")!!.getString()
-        val order2Price = incomeMsgList[1].getField("Price")!!.getString()
-        val order2Qty = incomeMsgList[1].getField("OrderQty")!!.getString()
         val result = ArrayList<Message>()
-        val repeating1 = message().addFields("NoPartyIDs", listOf(
-                message().addFields(
-                        "PartyRole", "76",
-                        "PartyID", "DEMO-CONN1",
-                        "PartyIDSource", "D"
-                ),
-                message().addFields(
-                        "PartyRole", "17",
-                        "PartyID", "DEMOFIRM2",
-                        "PartyIDSource", "D"
-                ),
-                message().addFields(
-                        "PartyRole", "3",
-                        "PartyID", "0",
-                        "PartyIDSource", "P"
-                ),
-                message().addFields(
-                        "PartyRole", "122",
-                        "PartyID", "0",
-                        "PartyIDSource", "P"
-                ),
-                message().addFields(
-                        "PartyRole", "12",
-                        "PartyID", "3",
-                        "PartyIDSource", "P"
-                )
-            )
-        )
-        val repeating2 = message().addFields("NoPartyIDs", listOf(
-                message().addFields(
-                        "PartyRole", "76",
-                        "PartyID", "DEMO-CONN2",
-                        "PartyIDSource", "D"
-                ),
-                message().addFields(
-                        "PartyRole", "17",
-                        "PartyID", "DEMOFIRM1",
-                        "PartyIDSource", "D"
-                ),
-                message().addFields(
-                        "PartyRole", "3",
-                        "PartyID", "0",
-                        "PartyIDSource", "P"
-                ),
-                message().addFields(
-                        "PartyRole", "122",
-                        "PartyID", "0",
-                        "PartyIDSource", "P"
-                ),
-                message().addFields(
-                        "PartyRole", "12",
-                        "PartyID", "3",
-                        "PartyIDSource", "P"
-                )
-            )
-        )
 
         if (!incomeMessage.containsFields("Side")) {
                     val rej = message("Reject").addFields(
@@ -182,7 +116,74 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             )
                     result.add(dcNew.build())
                 }
-                "2" -> {val trader1Order2fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
+                "2" -> {
+                    val cumQty1 = incomeMsgList[1].getField("OrderQty")!!.getInt()!!
+                    val cumQty2 = incomeMsgList[0].getField("OrderQty")!!.getInt()!!
+                    val leavesQty1 = incomeMessage.getField("OrderQty")!!.getInt()!! - cumQty1
+                    val leavesQty2 = incomeMessage.getField("OrderQty")!!.getInt()!! - (cumQty1 + cumQty2)
+                    val order1ClOdrID = incomeMsgList[0].getField("ClOrdID")!!.getString()
+                    val order1Price = incomeMsgList[0].getField("Price")!!.getString()
+                    val order1Qty = incomeMsgList[0].getField("OrderQty")!!.getString()
+                    val order2ClOdrID = incomeMsgList[1].getField("ClOrdID")!!.getString()
+                    val order2Price = incomeMsgList[1].getField("Price")!!.getString()
+                    val order2Qty = incomeMsgList[1].getField("OrderQty")!!.getString()
+                    val repeating1 = message().addFields("NoPartyIDs", listOf(
+                            message().addFields(
+                                    "PartyRole", "76",
+                                    "PartyID", "DEMO-CONN1",
+                                    "PartyIDSource", "D"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "17",
+                                    "PartyID", "DEMOFIRM2",
+                                    "PartyIDSource", "D"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "3",
+                                    "PartyID", "0",
+                                    "PartyIDSource", "P"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "122",
+                                    "PartyID", "0",
+                                    "PartyIDSource", "P"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "12",
+                                    "PartyID", "3",
+                                    "PartyIDSource", "P"
+                            )
+                    )
+                    )
+                    val repeating2 = message().addFields("NoPartyIDs", listOf(
+                            message().addFields(
+                                    "PartyRole", "76",
+                                    "PartyID", "DEMO-CONN2",
+                                    "PartyIDSource", "D"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "17",
+                                    "PartyID", "DEMOFIRM1",
+                                    "PartyIDSource", "D"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "3",
+                                    "PartyID", "0",
+                                    "PartyIDSource", "P"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "122",
+                                    "PartyID", "0",
+                                    "PartyIDSource", "P"
+                            ),
+                            message().addFields(
+                                    "PartyRole", "12",
+                                    "PartyID", "3",
+                                    "PartyIDSource", "P"
+                            )
+                    )
+                    )
+                    val trader1Order2fix1 = message("ExecutionReport", Direction.FIRST, "demo-conn1")
                         .copyFields(incomeMessage,
                                 "SecurityID",
                                 "SecurityIDSource",
