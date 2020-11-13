@@ -90,7 +90,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                     )
                     result.add(fixNew.build())
 // DropCopy
-                    val dcNew = message("ExecutionReport", Direction.FIRST, "demo-dc1")
+                    val dcNew = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
                             .copyFields(incomeMessage,  // fields from NewOrder
                                     "Side",
                                     "Price",
