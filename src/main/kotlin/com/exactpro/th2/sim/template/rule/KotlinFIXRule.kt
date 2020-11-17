@@ -53,9 +53,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
             ordIdList.removeAt(0)
         }
         val result = ArrayList<Message>()
-        when (incomeMessage.getString("Side")) {
-            "5221001" -> {
-                if (!incomeMessage.containsFields("Side")) {
+        if (!incomeMessage.containsFields("Side")) {
                             val rej = message("Reject").addFields(
                                     "RefTagID", "453",
                                     "RefMsgType", "D",
@@ -65,489 +63,403 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                             )
                             result.add(rej.build())
                         }
-                else {
-                    when (incomeMessage.getString("Side")) {
-                        "1" -> {
-                            val execIdNew = execId.incrementAndGet()
-                            val fixNew = message("ExecutionReport")
-                            .copyFields(incomeMessage,  // fields from NewOrder
-                                    "Side",
-                                    "Price",
-                                    "CumQty",
-                                    "ClOrdID",
-                                    "SecurityID",
-                                    "SecurityIDSource",
-                                    "OrdType",
-                                    "OrderQty",
-                                    "TradingParty",
-                                    "TimeInForce",
-                                    "OrderCapacity",
-                                    "AccountType"
-                            )
-                            .addFields(
-                                    "OrderID", ordId1,
-                                    "ExecID", execIdNew,
-                                    "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                    "Text", "Simulated New Order Buy is placed",
-                                    "ExecType", "0",
-                                    "OrdStatus", "0",
-                                    "CumQty", "0"
-                            )
-                            result.add(fixNew.build())
-                // DropCopy
-                            val dcNew = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
-                                    .copyFields(incomeMessage,  // fields from NewOrder
-                                            "Side",
-                                            "Price",
-                                            "CumQty",
-                                            "ClOrdID",
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderQty",
-                                            "TradingParty",
-                                            "TimeInForce",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "OrderID", ordId1,
-                                            "ExecID", execId.incrementAndGet(),
-                                            "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                            "Text", "Simulated New Order Buy is placed",
-                                            "ExecType", "0",
-                                            "OrdStatus", "0",
-                                            "CumQty", "0"
-                                    )
-                            result.add(dcNew.build())
-                        }
-                        "2" -> {
-        // Useful variables for buy-side
-                            val cumQty1 = incomeMsgList[1].getField("OrderQty")!!.getInt()!!
-                            val cumQty2 = incomeMsgList[0].getField("OrderQty")!!.getInt()!!
-                            val leavesQty1 = incomeMessage.getField("OrderQty")!!.getInt()!! - cumQty1
-                            val leavesQty2 = incomeMessage.getField("OrderQty")!!.getInt()!! - (cumQty1 + cumQty2)
-                            val order1ClOdrID = incomeMsgList[0].getField("ClOrdID")!!.getString()
-                            val order1Price = incomeMsgList[0].getField("Price")!!.getString()
-                            val order1Qty = incomeMsgList[0].getField("OrderQty")!!.getString()
-                            val order2ClOdrID = incomeMsgList[1].getField("ClOrdID")!!.getString()
-                            val order2Price = incomeMsgList[1].getField("Price")!!.getString()
-                            val order2Qty = incomeMsgList[1].getField("OrderQty")!!.getString()
-                            val repeating1 = message().addFields("NoPartyIDs", listOf(
-                                    message().addFields(
-                                            "PartyRole", "76",
-                                            "PartyID", "DEMO-CONN1",
-                                            "PartyIDSource", "D"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "17",
-                                            "PartyID", "DEMOFIRM2",
-                                            "PartyIDSource", "D"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "3",
-                                            "PartyID", "0",
-                                            "PartyIDSource", "P"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "122",
-                                            "PartyID", "0",
-                                            "PartyIDSource", "P"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "12",
-                                            "PartyID", "3",
-                                            "PartyIDSource", "P"
-                                    )
-                            )
-                            )
-                            val tradeMatchID1 = TrdMatchId.incrementAndGet()
-                            val tradeMatchID2 = TrdMatchId.incrementAndGet()
-        // Generator ER
-            // ER FF Order2 for Trader1
-                            val execReportId1 = execId.incrementAndGet()
-                            val trader1Order2fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
-                                    .copyFields(incomeMessage,
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating1,
-                                            "TimeInForce", "0",  // Get from message?
-                                            "ExecType", "F",
-                                            "OrdStatus", "2",
-                                            "CumQty", cumQty1,
-                                            "OrderQty", order2Qty,
-                                            "Price", order2Price,
-                                            "LastPx", order2Price,
-                                            "Side", "1",
-                                            "LeavesQty", "0",
-                                            "ClOrdID", order2ClOdrID,
-                                            "OrderID", ordIdList[1],
-                                            "ExecID", execReportId1,
-                                            "TrdMatchID", tradeMatchID1,
-                                            "Text", "The simulated order has been fully traded"
-                                    )
-                            result.add(trader1Order2fix1.build())
-                //DropCopy
-                            val trader1Order2dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
-                                    .copyFields(incomeMessage,
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating1,
-                                            "TimeInForce", "0",  // Get from message?
-                                            "ExecType", "F",
-                                            "OrdStatus", "2",
-                                            "CumQty", cumQty1,
-                                            "OrderQty", order2Qty,
-                                            "Price", order2Price,
-                                            "LastPx", order2Price,
-                                            "Side", "1",
-                                            "LeavesQty", "0",
-                                            "ClOrdID", order2ClOdrID,
-                                            "OrderID", ordIdList[1],
-                                            "ExecID", execReportId1,
-                                            "TrdMatchID", tradeMatchID1,
-                                            "Text", "The simulated order has been fully traded"
-                                    )
-                            result.add(trader1Order2dc1.build())
-            // ER FF Order1 for Trader1
-                            val execReportId2 = execId.incrementAndGet()
-                            val trader1Order1fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
-                                    .copyFields(incomeMessage,
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating1,
-                                            "TimeInForce", "0",  // Get from message?
-                                            "ExecType", "F",
-                                            "OrdStatus", "2",
-                                            "CumQty", cumQty2,
-                                            "OrderQty", order1Qty,
-                                            "Price", order1Price,
-                                            "LastPx", order1Price,
-                                            "Side", "1",
-                                            "ClOrdID", order1ClOdrID,
-                                            "LeavesQty", "0",
-                                            "OrderID", ordIdList[0],
-                                            "ExecID", execReportId2,
-                                            "TrdMatchID", tradeMatchID2,
-                                            "Text", "The simulated order has been fully traded"
-                                    )
-                            result.add(trader1Order1fix1.build())
-                //DropCopy
-                            val trader1Order1dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
-                                    .copyFields(incomeMessage,
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating1,
-                                            "TimeInForce", "0",  // Get from message?
-                                            "ExecType", "F",
-                                            "OrdStatus", "2",
-                                            "CumQty", cumQty2,
-                                            "OrderQty", order1Qty,
-                                            "Price", order1Price,
-                                            "LastPx", order1Price,
-                                            "Side", "1",
-                                            "ClOrdID", order1ClOdrID,
-                                            "LeavesQty", "0",
-                                            "OrderID", ordIdList[0],
-                                            "ExecID", execReportId2,
-                                            "TrdMatchID", tradeMatchID2,
-                                            "Text", "The simulated order has been fully traded"
-                                    )
-                            result.add(trader1Order1dc1.build())
-            // ER1 PF Order3 for Trader2
-                            val repeating2 = message().addFields("NoPartyIDs", listOf(
-                                    message().addFields(
-                                            "PartyRole", "76",
-                                            "PartyID", "DEMO-CONN2",
-                                            "PartyIDSource", "D"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "17",
-                                            "PartyID", "DEMOFIRM1",
-                                            "PartyIDSource", "D"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "3",
-                                            "PartyID", "0",
-                                            "PartyIDSource", "P"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "122",
-                                            "PartyID", "0",
-                                            "PartyIDSource", "P"
-                                    ),
-                                    message().addFields(
-                                            "PartyRole", "12",
-                                            "PartyID", "3",
-                                            "PartyIDSource", "P"
-                                    )
-                            )
-                            )
-                            val execReportId3 = execId.incrementAndGet()
-                            val trader2Order3fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
-                                    .copyFields(incomeMessage,
-                                            "TimeInForce",
-                                            "Side",
-                                            "Price",
-                                            "ClOrdID",
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating2,
-                                            "ExecType", "F",
-                                            "OrdStatus", "1",
-                                            "CumQty", cumQty1,
-                                            "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                            "LeavesQty", leavesQty1,
-                                            "OrderID", ordId1,
-                                            "ExecID", execReportId3,
-                                            "TrdMatchID", tradeMatchID1,
-                                            "Text", "The simulated order has been partially traded"
-                                    )
-                            result.add(trader2Order3fix1.build())
-                //DropCopy
-                            val trader2Order3dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
-                                    .copyFields(incomeMessage,
-                                            "TimeInForce",
-                                            "Side",
-                                            "Price",
-                                            "ClOrdID",
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating2,
-                                            "ExecType", "F",
-                                            "OrdStatus", "1",
-                                            "CumQty", cumQty1,
-                                            "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                            "LeavesQty", leavesQty1,
-                                            "OrderID", ordId1,
-                                            "ExecID", execReportId3,
-                                            "TrdMatchID", tradeMatchID1,
-                                            "Text", "The simulated order has been partially traded"
-                                    )
-                            result.add(trader2Order3dc1.build())
-            // ER2 PF Order3 for Trader2
-                            val execReportId4 = execId.incrementAndGet()
-                            val trader2Order3fix2 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
-                                    .copyFields(incomeMessage,
-                                            "TimeInForce",
-                                            "Side",
-                                            "Price",
-                                            "ClOrdID",
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating2,
-                                            "ExecType", "F",
-                                            "OrdStatus", "1",
-                                            "CumQty", cumQty1+cumQty2,
-                                            "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                            "LeavesQty", leavesQty2,
-                                            "OrderID", ordId1,
-                                            "ExecID", execReportId4,
-                                            "TrdMatchID", tradeMatchID2,
-                                            "Text", "The simulated order has been partially traded"
-                                    )
-                            result.add(trader2Order3fix2.build())
-                //DropCopy
-                            val trader2Order3dc2 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
-                                    .copyFields(incomeMessage,
-                                            "TimeInForce",
-                                            "Side",
-                                            "Price",
-                                            "ClOrdID",
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "TradingParty", repeating2,
-                                            "ExecType", "F",
-                                            "OrdStatus", "1",
-                                            "CumQty", cumQty1+cumQty2,
-                                            "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                            "LeavesQty", leavesQty2,
-                                            "OrderID", ordId1,
-                                            "ExecID", execReportId4,
-                                            "TrdMatchID", tradeMatchID2,
-                                            "Text", "The simulated order has been partially traded"
-                                    )
-                            result.add(trader2Order3dc2.build())
-            // ER3 CC Order3 for Trader2
-                            val execReportId5 = execId.incrementAndGet()
-                            val trader2Order3fix3 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
-                                    .copyFields(incomeMessage,
-                                            "TimeInForce",
-                                            "Side",
-                                            "Price",
-                                            "ClOrdID",
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "TradingParty",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "ExecType", "C",
-                                            "OrdStatus", "C",
-                                            "CumQty", cumQty1+cumQty2,
-                                            "LeavesQty", "0",
-                                            "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                            "OrderID", ordId1,
-                                            "ExecID", execReportId5,
-                                            "Text", "The remaining part of simulated order has been expired"
-                                    )
-                            result.add(trader2Order3fix3.build())
-                //DropCopy
-                            val trader2Order3dc3 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
-                                    .copyFields(incomeMessage,
-                                            "TimeInForce",
-                                            "Side",
-                                            "Price",
-                                            "ClOrdID",
-                                            "SecurityID",
-                                            "SecurityIDSource",
-                                            "OrdType",
-                                            "TradingParty",
-                                            "OrderCapacity",
-                                            "AccountType"
-                                    )
-                                    .addFields(
-                                            "ExecType", "C",
-                                            "OrdStatus", "C",
-                                            "CumQty", cumQty1+cumQty2,
-                                            "LeavesQty", "0",
-                                            "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
-                                            "OrderID", ordId1,
-                                            "ExecID", execReportId5,
-                                            "Text", "The remaining part of simulated order has been expired"
-                                    )
-                            result.add(trader2Order3dc3.build())
-                        }
+        else {
+                when (incomeMessage.getString("Side")) {
+                    "1" -> {
+                        val execIdNew = execId.incrementAndGet()
+                        val fixNew = message("ExecutionReport")
+                        .copyFields(incomeMessage,  // fields from NewOrder
+                                "Side",
+                                "Price",
+                                "CumQty",
+                                "ClOrdID",
+                                "SecurityID",
+                                "SecurityIDSource",
+                                "OrdType",
+                                "OrderQty",
+                                "TradingParty",
+                                "TimeInForce",
+                                "OrderCapacity",
+                                "AccountType"
+                        )
+                        .addFields(
+                                "OrderID", ordId1,
+                                "ExecID", execIdNew,
+                                "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                "Text", "Simulated New Order Buy is placed",
+                                "ExecType", "0",
+                                "OrdStatus", "0",
+                                "CumQty", "0"
+                        )
+                        result.add(fixNew.build())
+            // DropCopy
+                        val dcNew = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
+                                .copyFields(incomeMessage,  // fields from NewOrder
+                                        "Side",
+                                        "Price",
+                                        "CumQty",
+                                        "ClOrdID",
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderQty",
+                                        "TradingParty",
+                                        "TimeInForce",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "OrderID", ordId1,
+                                        "ExecID", execId.incrementAndGet(),
+                                        "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                        "Text", "Simulated New Order Buy is placed",
+                                        "ExecType", "0",
+                                        "OrdStatus", "0",
+                                        "CumQty", "0"
+                                )
+                        result.add(dcNew.build())
+                    }
+                    "2" -> {
+    // Useful variables for buy-side
+                        val cumQty1 = incomeMsgList[1].getField("OrderQty")!!.getInt()!!
+                        val cumQty2 = incomeMsgList[0].getField("OrderQty")!!.getInt()!!
+                        val leavesQty1 = incomeMessage.getField("OrderQty")!!.getInt()!! - cumQty1
+                        val leavesQty2 = incomeMessage.getField("OrderQty")!!.getInt()!! - (cumQty1 + cumQty2)
+                        val order1ClOdrID = incomeMsgList[0].getField("ClOrdID")!!.getString()
+                        val order1Price = incomeMsgList[0].getField("Price")!!.getString()
+                        val order1Qty = incomeMsgList[0].getField("OrderQty")!!.getString()
+                        val order2ClOdrID = incomeMsgList[1].getField("ClOrdID")!!.getString()
+                        val order2Price = incomeMsgList[1].getField("Price")!!.getString()
+                        val order2Qty = incomeMsgList[1].getField("OrderQty")!!.getString()
+                        val repeating1 = message().addFields("NoPartyIDs", listOf(
+                                message().addFields(
+                                        "PartyRole", "76",
+                                        "PartyID", "DEMO-CONN1",
+                                        "PartyIDSource", "D"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "17",
+                                        "PartyID", "DEMOFIRM2",
+                                        "PartyIDSource", "D"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "3",
+                                        "PartyID", "0",
+                                        "PartyIDSource", "P"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "122",
+                                        "PartyID", "0",
+                                        "PartyIDSource", "P"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "12",
+                                        "PartyID", "3",
+                                        "PartyIDSource", "P"
+                                )
+                        )
+                        )
+                        val tradeMatchID1 = TrdMatchId.incrementAndGet()
+                        val tradeMatchID2 = TrdMatchId.incrementAndGet()
+    // Generator ER
+        // ER FF Order2 for Trader1
+                        val execReportId1 = execId.incrementAndGet()
+                        val trader1Order2fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
+                                .copyFields(incomeMessage,
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating1,
+                                        "TimeInForce", "0",  // Get from message?
+                                        "ExecType", "F",
+                                        "OrdStatus", "2",
+                                        "CumQty", cumQty1,
+                                        "OrderQty", order2Qty,
+                                        "Price", order2Price,
+                                        "LastPx", order2Price,
+                                        "Side", "1",
+                                        "LeavesQty", "0",
+                                        "ClOrdID", order2ClOdrID,
+                                        "OrderID", ordIdList[1],
+                                        "ExecID", execReportId1,
+                                        "TrdMatchID", tradeMatchID1,
+                                        "Text", "The simulated order has been fully traded"
+                                )
+                        result.add(trader1Order2fix1.build())
+            //DropCopy
+                        val trader1Order2dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
+                                .copyFields(incomeMessage,
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating1,
+                                        "TimeInForce", "0",  // Get from message?
+                                        "ExecType", "F",
+                                        "OrdStatus", "2",
+                                        "CumQty", cumQty1,
+                                        "OrderQty", order2Qty,
+                                        "Price", order2Price,
+                                        "LastPx", order2Price,
+                                        "Side", "1",
+                                        "LeavesQty", "0",
+                                        "ClOrdID", order2ClOdrID,
+                                        "OrderID", ordIdList[1],
+                                        "ExecID", execReportId1,
+                                        "TrdMatchID", tradeMatchID1,
+                                        "Text", "The simulated order has been fully traded"
+                                )
+                        result.add(trader1Order2dc1.build())
+        // ER FF Order1 for Trader1
+                        val execReportId2 = execId.incrementAndGet()
+                        val trader1Order1fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
+                                .copyFields(incomeMessage,
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating1,
+                                        "TimeInForce", "0",  // Get from message?
+                                        "ExecType", "F",
+                                        "OrdStatus", "2",
+                                        "CumQty", cumQty2,
+                                        "OrderQty", order1Qty,
+                                        "Price", order1Price,
+                                        "LastPx", order1Price,
+                                        "Side", "1",
+                                        "ClOrdID", order1ClOdrID,
+                                        "LeavesQty", "0",
+                                        "OrderID", ordIdList[0],
+                                        "ExecID", execReportId2,
+                                        "TrdMatchID", tradeMatchID2,
+                                        "Text", "The simulated order has been fully traded"
+                                )
+                        result.add(trader1Order1fix1.build())
+            //DropCopy
+                        val trader1Order1dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server1")
+                                .copyFields(incomeMessage,
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating1,
+                                        "TimeInForce", "0",  // Get from message?
+                                        "ExecType", "F",
+                                        "OrdStatus", "2",
+                                        "CumQty", cumQty2,
+                                        "OrderQty", order1Qty,
+                                        "Price", order1Price,
+                                        "LastPx", order1Price,
+                                        "Side", "1",
+                                        "ClOrdID", order1ClOdrID,
+                                        "LeavesQty", "0",
+                                        "OrderID", ordIdList[0],
+                                        "ExecID", execReportId2,
+                                        "TrdMatchID", tradeMatchID2,
+                                        "Text", "The simulated order has been fully traded"
+                                )
+                        result.add(trader1Order1dc1.build())
+        // ER1 PF Order3 for Trader2
+                        val repeating2 = message().addFields("NoPartyIDs", listOf(
+                                message().addFields(
+                                        "PartyRole", "76",
+                                        "PartyID", "DEMO-CONN2",
+                                        "PartyIDSource", "D"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "17",
+                                        "PartyID", "DEMOFIRM1",
+                                        "PartyIDSource", "D"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "3",
+                                        "PartyID", "0",
+                                        "PartyIDSource", "P"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "122",
+                                        "PartyID", "0",
+                                        "PartyIDSource", "P"
+                                ),
+                                message().addFields(
+                                        "PartyRole", "12",
+                                        "PartyID", "3",
+                                        "PartyIDSource", "P"
+                                )
+                        )
+                        )
+                        val execReportId3 = execId.incrementAndGet()
+                        val trader2Order3fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
+                                .copyFields(incomeMessage,
+                                        "TimeInForce",
+                                        "Side",
+                                        "Price",
+                                        "ClOrdID",
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating2,
+                                        "ExecType", "F",
+                                        "OrdStatus", "1",
+                                        "CumQty", cumQty1,
+                                        "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                        "LeavesQty", leavesQty1,
+                                        "OrderID", ordId1,
+                                        "ExecID", execReportId3,
+                                        "TrdMatchID", tradeMatchID1,
+                                        "Text", "The simulated order has been partially traded"
+                                )
+                        result.add(trader2Order3fix1.build())
+            //DropCopy
+                        val trader2Order3dc1 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
+                                .copyFields(incomeMessage,
+                                        "TimeInForce",
+                                        "Side",
+                                        "Price",
+                                        "ClOrdID",
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating2,
+                                        "ExecType", "F",
+                                        "OrdStatus", "1",
+                                        "CumQty", cumQty1,
+                                        "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                        "LeavesQty", leavesQty1,
+                                        "OrderID", ordId1,
+                                        "ExecID", execReportId3,
+                                        "TrdMatchID", tradeMatchID1,
+                                        "Text", "The simulated order has been partially traded"
+                                )
+                        result.add(trader2Order3dc1.build())
+        // ER2 PF Order3 for Trader2
+                        val execReportId4 = execId.incrementAndGet()
+                        val trader2Order3fix2 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
+                                .copyFields(incomeMessage,
+                                        "TimeInForce",
+                                        "Side",
+                                        "Price",
+                                        "ClOrdID",
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating2,
+                                        "ExecType", "F",
+                                        "OrdStatus", "1",
+                                        "CumQty", cumQty1+cumQty2,
+                                        "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                        "LeavesQty", leavesQty2,
+                                        "OrderID", ordId1,
+                                        "ExecID", execReportId4,
+                                        "TrdMatchID", tradeMatchID2,
+                                        "Text", "The simulated order has been partially traded"
+                                )
+                        result.add(trader2Order3fix2.build())
+            //DropCopy
+                        val trader2Order3dc2 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
+                                .copyFields(incomeMessage,
+                                        "TimeInForce",
+                                        "Side",
+                                        "Price",
+                                        "ClOrdID",
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "TradingParty", repeating2,
+                                        "ExecType", "F",
+                                        "OrdStatus", "1",
+                                        "CumQty", cumQty1+cumQty2,
+                                        "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                        "LeavesQty", leavesQty2,
+                                        "OrderID", ordId1,
+                                        "ExecID", execReportId4,
+                                        "TrdMatchID", tradeMatchID2,
+                                        "Text", "The simulated order has been partially traded"
+                                )
+                        result.add(trader2Order3dc2.build())
+        // ER3 CC Order3 for Trader2
+                        val execReportId5 = execId.incrementAndGet()
+                        val trader2Order3fix3 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
+                                .copyFields(incomeMessage,
+                                        "TimeInForce",
+                                        "Side",
+                                        "Price",
+                                        "ClOrdID",
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "TradingParty",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "ExecType", "C",
+                                        "OrdStatus", "C",
+                                        "CumQty", cumQty1+cumQty2,
+                                        "LeavesQty", "0",
+                                        "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                        "OrderID", ordId1,
+                                        "ExecID", execReportId5,
+                                        "Text", "The remaining part of simulated order has been expired"
+                                )
+                        result.add(trader2Order3fix3.build())
+            //DropCopy
+                        val trader2Order3dc3 = message("ExecutionReport", Direction.FIRST, "dc-demo-server2")
+                                .copyFields(incomeMessage,
+                                        "TimeInForce",
+                                        "Side",
+                                        "Price",
+                                        "ClOrdID",
+                                        "SecurityID",
+                                        "SecurityIDSource",
+                                        "OrdType",
+                                        "TradingParty",
+                                        "OrderCapacity",
+                                        "AccountType"
+                                )
+                                .addFields(
+                                        "ExecType", "C",
+                                        "OrdStatus", "C",
+                                        "CumQty", cumQty1+cumQty2,
+                                        "LeavesQty", "0",
+                                        "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
+                                        "OrderID", ordId1,
+                                        "ExecID", execReportId5,
+                                        "Text", "The remaining part of simulated order has been expired"
+                                )
+                        result.add(trader2Order3dc3.build())
                     }
                 }
             }
-            "01" -> {
-                val repeating1 = message().addFields(
-                        "NoPartyIDs", listOf(
-                        message().addFields(
-                                "PartyRole", "76",
-                                "PartyID", "DEMO-CONN1",
-                                "PartyIDSource", "D"
-                        ),
-                        message().addFields(
-                                "PartyRole", "17",
-                                "PartyID", "DEMOFIRM2",
-                                "PartyIDSource", "D"
-                        ),
-                        message().addFields(
-                                "PartyRole", "3",
-                                "PartyID", "0",
-                                "PartyIDSource", "P"
-                        ),
-                        message().addFields(
-                                "PartyRole", "122",
-                                "PartyID", "0",
-                                "PartyIDSource", "P"
-                        ),
-                        message().addFields(
-                                "PartyRole", "12",
-                                "PartyID", "3",
-                                "PartyIDSource", "P"
-                        )
-                )
-                )
-                val repeating2 = message().addFields(
-                        "NoPartyIDs", listOf(
-                        message().addFields(
-                                "PartyRole", "76",
-                                "PartyID", "DEMO-CONN2",
-                                "PartyIDSource", "D"
-                        ),
-                        message().addFields(
-                                "PartyRole", "17",
-                                "PartyID", "DEMOFIRM1",
-                                "PartyIDSource", "D"
-                        ),
-                        message().addFields(
-                                "PartyRole", "3",
-                                "PartyID", "0",
-                                "PartyIDSource", "P"
-                        ),
-                        message().addFields(
-                                "PartyRole", "122",
-                                "PartyID", "0",
-                                "PartyIDSource", "P"
-                        ),
-                        message().addFields(
-                                "PartyRole", "12",
-                                "PartyID", "3",
-                                "PartyIDSource", "P"
-                        )
-                )
-                )
-                val anyExecutionReport = message("ExecutionReport")
-                        .addFields(
-                                "TimeInForce", "-0",
-                                "TradingParty", repeating1,
-                                "TradingParty", repeating2,
-                                "Side", "-0",
-                                "Price", "-0",
-                                "ClOrdID", "-0",
-                                "SecurityID", "-0",
-                                "SecurityIDSource", "-0",
-                                "OrdType", "-0",
-                                "TradingParty", "-0",
-                                "OrderCapacity", "-0",
-                                "AccountType", "-0",
-                                "ExecType", "-0",
-                                "OrdStatus", "-0",
-                                "CumQty", "-0",
-                                "LeavesQty", "-0",
-                                "OrderQty", "-13",
-                                "OrderID", "-456",
-                                "ExecID", "-123",
-                                "Text", "Simulate' wrong message"
-                        )
-                result.add(anyExecutionReport.build())
-            }
-        }
         return result
     }
 }
