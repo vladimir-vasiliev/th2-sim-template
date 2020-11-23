@@ -24,6 +24,7 @@ import com.exactpro.th2.common.value.getInt
 import com.exactpro.th2.common.value.getMessage
 import com.exactpro.th2.common.value.getString
 import com.exactpro.th2.sim.rule.impl.MessageCompareRule
+import java.time.LocalDateTime
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -95,6 +96,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "OrderID", ordId1,
                                         "ExecID", execIdNew,
                                         "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
@@ -121,6 +123,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "OrderID", ordId1,
                                         "ExecID", execId.incrementAndGet(),
                                         "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
@@ -185,6 +188,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -212,6 +216,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -240,6 +245,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -267,6 +273,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -327,6 +334,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -353,6 +361,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -380,6 +389,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -406,6 +416,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -434,6 +445,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "ExecType", "C",
                                         "OrdStatus", "C",
                                         "CumQty", cumQty1 + cumQty2,
@@ -459,6 +471,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
+                                        "TransactTime", LocalDateTime.now().toString(),
                                         "ExecType", "C",
                                         "OrdStatus", "C",
                                         "CumQty", cumQty1 + cumQty2,
