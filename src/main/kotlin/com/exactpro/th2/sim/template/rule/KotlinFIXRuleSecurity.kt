@@ -48,26 +48,40 @@ class KotlinFIXRuleSecurity(field: Map<String, Value>) : MessageCompareRule() {
             result.add(reject.build())
         }
         else {
-            val SecurityStatus1 = message("SecurityStatus").addFields(
-                            "SecurityID", incomeMessage.getField("SecurityID")!!.getString(),
-                            "SecurityIDSource", incomeMessage.getField("SecurityIDSource")!!.getString(),
-                            "SecurityStatusReqID", incomeMessage.getField("SecurityStatusReqID")!!.getString(),
-                            "Currency", "RUB",
-                            "MarketID", "Demo Market",
-                            "MarketSegmentID", "NEW",
-                            "TradingSessionID", "1",
-                            "TradingSessionSubID", "3",
-                            "UnsolicitedIndicator", "N",
-                            "SecurityTradingStatus", "17",
-                            "BuyVolume", "0",
-                            "SellVolume", "0",
-                            "HighPx", "56",
-                            "LowPx", "54",
-                            "LastPx", "54",
-                            "FirstPx", "54",
-                            "Text", "The simulated SecurityStatus has been sent"
-                    )
-                    result.add(SecurityStatus1.build())
+            if (incomeMessage.getString("SecurityID") == "INSTR6") {
+                val unknownInstr = message("BusinessMessageReject").addFields(
+                        "SecurityID", incomeMessage.getField("SecurityID")!!.getString(),
+                        "SecurityIDSource", incomeMessage.getField("SecurityIDSource")!!.getString(),
+                        "SecurityStatusReqID", incomeMessage.getField("SecurityStatusReqID")!!.getString(),
+                        "TradingSessionID", "1",
+                        "TradingSessionSubID", "3",
+                        "UnsolicitedIndicator", "N",
+                        "SecurityTradingStatus", "20",
+                        "Text", "Unknown or Invalid instrument"
+                )
+                result.add(unknownInstr.build())
+            } else {
+                val SecurityStatus1 = message("SecurityStatus").addFields(
+                        "SecurityID", incomeMessage.getField("SecurityID")!!.getString(),
+                        "SecurityIDSource", incomeMessage.getField("SecurityIDSource")!!.getString(),
+                        "SecurityStatusReqID", incomeMessage.getField("SecurityStatusReqID")!!.getString(),
+                        "Currency", "RUB",
+                        "MarketID", "Demo Market",
+                        "MarketSegmentID", "NEW",
+                        "TradingSessionID", "1",
+                        "TradingSessionSubID", "3",
+                        "UnsolicitedIndicator", "N",
+                        "SecurityTradingStatus", "17",
+                        "BuyVolume", "0",
+                        "SellVolume", "0",
+                        "HighPx", "56",
+                        "LowPx", "54",
+                        "LastPx", "54",
+                        "FirstPx", "54",
+                        "Text", "The simulated SecurityStatus has been sent"
+                )
+                result.add(SecurityStatus1.build())
+            }
         }
         return result
     }
