@@ -80,6 +80,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                 when (incomeMessage.getString("Side")) {
                     "1" -> {
                         val execIdNew = execId.incrementAndGet()
+                        val TransTime = LocalDateTime.now().toString()
                         val fixNew = message("ExecutionReport")
                                 .copyFields(incomeMessage,  // fields from NewOrder
                                         "Side",
@@ -96,7 +97,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime,
                                         "OrderID", ordId1,
                                         "ExecID", execIdNew,
                                         "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
@@ -123,7 +124,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime,
                                         "OrderID", ordId1,
                                         "ExecID", execId.incrementAndGet(),
                                         "LeavesQty", incomeMessage.getField("OrderQty")!!.getString(),
@@ -179,6 +180,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                         // Generator ER
                         // ER FF Order2 for Trader1
                         val execReportId1 = execId.incrementAndGet()
+                        val TransTime1 = LocalDateTime.now().toString()
                         val trader1Order2fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
                                 .copyFields(incomeMessage,
                                         "SecurityID",
@@ -188,7 +190,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime1,
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -216,7 +218,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime1,
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -236,6 +238,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                         result.add(trader1Order2dc1.build())
                         // ER FF Order1 for Trader1
                         val execReportId2 = execId.incrementAndGet()
+                        val TransTime2 = LocalDateTime.now().toString()
                         val trader1Order1fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server1")
                                 .copyFields(incomeMessage,
                                         "SecurityID",
@@ -245,7 +248,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime2,
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -273,7 +276,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime2,
                                         "TradingParty", repeating1,
                                         "TimeInForce", "0",  // Get from message?
                                         "ExecType", "F",
@@ -321,6 +324,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                         )
                         )
                         val execReportId3 = execId.incrementAndGet()
+                        val TransTime3 = LocalDateTime.now().toString()
                         val trader2Order3fix1 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
                                 .copyFields(incomeMessage,
                                         "TimeInForce",
@@ -334,7 +338,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime3,
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -361,7 +365,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime3,
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -376,6 +380,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                         result.add(trader2Order3dc1.build())
                         // ER2 PF Order3 for Trader2
                         val execReportId4 = execId.incrementAndGet()
+                        val TransTime4 = LocalDateTime.now().toString()
                         val trader2Order3fix2 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
                                 .copyFields(incomeMessage,
                                         "TimeInForce",
@@ -389,7 +394,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime4,
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -416,7 +421,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime4,
                                         "TradingParty", repeating2,
                                         "ExecType", "F",
                                         "OrdStatus", "1",
@@ -431,6 +436,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                         result.add(trader2Order3dc2.build())
                         // ER3 CC Order3 for Trader2
                         val execReportId5 = execId.incrementAndGet()
+                        val TransTime5 = LocalDateTime.now().toString()
                         val trader2Order3fix3 = message("ExecutionReport", Direction.FIRST, "fix-demo-server2")
                                 .copyFields(incomeMessage,
                                         "TimeInForce",
@@ -445,7 +451,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime5,
                                         "ExecType", "C",
                                         "OrdStatus", "C",
                                         "CumQty", cumQty1 + cumQty2,
@@ -471,7 +477,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                         "AccountType"
                                 )
                                 .addFields(
-                                        "TransactTime", LocalDateTime.now().toString(),
+                                        "TransactTime", TransTime5,
                                         "ExecType", "C",
                                         "OrdStatus", "C",
                                         "CumQty", cumQty1 + cumQty2,
