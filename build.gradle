@@ -49,12 +49,13 @@ repositories {
 }
 
 dependencies {
-    api platform('com.exactpro.th2:bom:2.8.+')
+    api platform('com.exactpro.th2:bom:2.9.+')
 
-    implementation "com.exactpro.th2:sim:2.3.0"
+    implementation "com.exactpro.th2:sim"
     implementation "com.exactpro.th2:common"
     api "com.exactpro.th2:grpc-sim"
-    api "com.exactpro.th2:grpc-sim-${grpc_suffix}${grpc_version.isEmpty() ? "" : ":${grpc_version}"}"
+    api "com.exactpro.th2:grpc-sim-template"
+    //api "com.exactpro.th2:grpc-sim-${grpc_suffix}${grpc_version.isEmpty() ? "" : ":${grpc_version}"}"
     implementation "com.exactpro.th2:grpc-common"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
