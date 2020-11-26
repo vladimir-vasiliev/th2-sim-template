@@ -1,10 +1,7 @@
 # Overview
-Simulator is a passive th2 component with parameterised rules which is implemented simulate logic.
-Script or other components can create, remove and get information about running rules in simulator via gRPC. Simulator can interact with conn (Connects).
+This project demonstrates how to organize your project with custom rules for [th2-sim](https://github.com/th2-net/th2-sim).
 
 This project implemented gRPC API described in the [th2-grpc-sim-template](https://github.com/th2-net/th2-grpc-sim-template/blob/master/src/main/proto/th2_grpc_sim_template/sim_template.proto "sim_template.proto")
- 
-This project is template how create and add custom rules.
 
 ## Rules
 
