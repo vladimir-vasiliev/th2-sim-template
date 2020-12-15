@@ -833,7 +833,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                             "TransactTime", transTime2,
                                             "TradingParty", repeating2,
                                             "ExecType", "F",
-                                            "OrdStatus", "1",
+                                            "OrdStatus", "2",  // Incorrect value as testcase
                                             "LastPx", order1Price,
                                             "CumQty", cumQty1 + cumQty2,
                                             "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
@@ -861,7 +861,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                             "TransactTime", transTime2,
                                             "TradingParty", repeating2,
                                             "ExecType", "F",
-                                            "OrdStatus", "2",  // Incorrect value as testcase
+                                            "OrdStatus", "1",
                                             "LastPx", order1Price,
                                             "CumQty", cumQty1 + cumQty2,
                                             "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
