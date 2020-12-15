@@ -825,15 +825,13 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                             "ClOrdID",
                                             "SecurityID",
                                             "SecurityIDSource",
-                                            "OrdType",
-                                            "OrderCapacity",
-                                            "AccountType"
+                                            "OrdType"
                                     )
                                     .addFields(
                                             "TransactTime", transTime2,
                                             "TradingParty", repeating2,
                                             "ExecType", "F",
-                                            "OrdStatus", "2",  // Incorrect value as testcase
+                                            "OrdStatus", "1",
                                             "LastPx", order1Price,
                                             "CumQty", cumQty1 + cumQty2,
                                             "OrderQty", incomeMessage.getField("OrderQty")!!.getString(),
@@ -841,7 +839,9 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                             "OrderID", ordId1,
                                             "ExecID", execReportId4,
                                             "TrdMatchID", tradeMatchID2,
-                                            "Text", "The simulated order has been partially traded"
+                                            "Text", "The simulated order has been partially traded",
+                                            "OrderCapacity", "P",  // Incorrect value as testcase
+                                            "AccountType", "2"    // Incorrect value as testcase
                                     )
                             result.add(trader2Order3fix2.build())
                             //DropCopy
