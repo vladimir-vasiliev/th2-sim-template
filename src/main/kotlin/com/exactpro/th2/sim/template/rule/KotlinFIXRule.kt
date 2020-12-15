@@ -839,9 +839,9 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                             "OrderID", ordId1,
                                             "ExecID", execReportId4,
                                             "TrdMatchID", tradeMatchID2,
-                                            "Text", "The simulated order has been partially traded",
+                                            "Text", "Execution Report with incorrect value in OrdStatus tag",
                                             "OrderCapacity", "P",  // Incorrect value as testcase
-                                            "AccountType", "2"    // Incorrect value as testcase
+                                            "AccountType", "2"     // Incorrect value as testcase
                                     )
                             result.add(trader2Order3fix2.build())
                             //DropCopy
@@ -869,7 +869,7 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                                             "OrderID", ordId1,
                                             "ExecID", execReportId4,
                                             "TrdMatchID", tradeMatchID2,
-                                            "Text", "Execution Report with incorrect value in OrdStatus tag"
+                                            "Text", "The simulated order has been partially traded"
                                     )
                             result.add(trader2Order3dc2.build())
                             // ER3 CC Order3 for Trader2
