@@ -38,7 +38,6 @@ class KotlinFIXRuleSecurity(field: Map<String, Value>) : MessageCompareRule() {
     }
 
     override fun handle(context: IRuleContext, incomeMessage: Message) {
-        val result = ArrayList<Message>()
         if (!incomeMessage.containsFields("SecurityID")){
             val reject = message("Reject").addFields(
                     "RefTagID", "48",
@@ -47,7 +46,7 @@ class KotlinFIXRuleSecurity(field: Map<String, Value>) : MessageCompareRule() {
                     "Text", "Incorrect instrument",
                     "SessionRejectReason", "99"
             )
-            result.add(reject.build())
+            context.send(reject.build())
         }
         else {
             if (incomeMessage.getString("SecurityID") == "INSTR6") {
@@ -59,7 +58,7 @@ class KotlinFIXRuleSecurity(field: Map<String, Value>) : MessageCompareRule() {
                         "SecurityTradingStatus", "20",
                         "Text", "Unknown or Invalid instrument"
                 )
-                result.add(unknownInstr.build())
+                context.send(unknownInstr.build())
             } else {
                 val SecurityStatus1 = message("SecurityStatus").addFields(
                         "SecurityID", incomeMessage.getField("SecurityID")!!.getString(),
@@ -80,12 +79,10 @@ class KotlinFIXRuleSecurity(field: Map<String, Value>) : MessageCompareRule() {
                         "FirstPx", "54",
                         "Text", "The simulated SecurityStatus has been sent"
                 )
-                result.add(SecurityStatus1.build())
+                context.send(SecurityStatus1.build())
             }
         }
 
-        result.forEach {
-            context.send(it)
-        }
+        
     }
 }
