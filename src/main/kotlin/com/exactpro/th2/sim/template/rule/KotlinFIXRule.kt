@@ -23,6 +23,7 @@ import com.exactpro.th2.common.message.*
 import com.exactpro.th2.common.value.getInt
 import com.exactpro.th2.common.value.getMessage
 import com.exactpro.th2.common.value.getString
+import com.exactpro.th2.sim.rule.IRuleContext
 import com.exactpro.th2.sim.rule.impl.MessageCompareRule
 import java.time.LocalDateTime
 
@@ -42,7 +43,8 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
     init {
         init("NewOrderSingle", field)
     }
-    override fun handleTriggered(incomeMessage: Message): MutableList<Message> {
+
+    override fun handle(context: IRuleContext, incomeMessage: Message) {
         incomeMsgList.add(incomeMessage)
         while (incomeMsgList.size > 3) {
             incomeMsgList.removeAt(0)
@@ -1359,6 +1361,9 @@ class KotlinFIXRule(field: Map<String, Value>) : MessageCompareRule() {
                 }
             }
         }
-        return result
+
+        result.forEach {
+            context.send(it)
+        }
     }
 }

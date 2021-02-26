@@ -21,6 +21,7 @@ import com.exactpro.th2.common.grpc.Value
 import com.exactpro.th2.common.message.*
 import com.exactpro.th2.common.value.getMessage
 import com.exactpro.th2.common.value.getString
+import com.exactpro.th2.sim.rule.IRuleContext
 import com.exactpro.th2.sim.rule.impl.MessageCompareRule
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -35,7 +36,8 @@ class KotlinFIXRuleSecurity(field: Map<String, Value>) : MessageCompareRule() {
     init {
         init("SecurityStatusRequest", field)
     }
-    override fun handleTriggered(incomeMessage: Message): MutableList<Message> {
+
+    override fun handle(context: IRuleContext, incomeMessage: Message) {
         val result = ArrayList<Message>()
         if (!incomeMessage.containsFields("SecurityID")){
             val reject = message("Reject").addFields(
@@ -81,6 +83,9 @@ class KotlinFIXRuleSecurity(field: Map<String, Value>) : MessageCompareRule() {
                 result.add(SecurityStatus1.build())
             }
         }
-        return result
+
+        result.forEach {
+            context.send(it)
+        }
     }
 }
