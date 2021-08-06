@@ -46,3 +46,10 @@ If the income message is wrong (not ``NewOrderSingle``), the rule in simulator w
 If the income message is correct (``NewOrderSingle``), the rule will generate one ``ExecutionReport``.
 
 ![picture](scheme.png)
+
+## Release notes
+
+### 3.2.0
+
++ Update th2-sim to version 3.7.0
++ Update th2-common to version 3.19.0
