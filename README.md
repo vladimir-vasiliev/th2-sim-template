@@ -52,4 +52,9 @@ If the income message is correct (``NewOrderSingle``), the rule will generate on
 ### 3.2.0
 
 + Update th2-sim to version 3.7.0
+  + Added `IRuleContext.removeRule()` method which allows a rule to remove itself
+  + Added ability to schedule execution of arbitrary actions via `IRuleContext.execute` methods
 + Update th2-common to version 3.19.0
+    + Extended Utility classes
+        + Added the toTreeTable method to convert message/message filter to event data
+        + Added the Event.exception method to include an exception and optionally all the causes to the body data as a series of messages
