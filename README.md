@@ -55,6 +55,12 @@ If the income message is correct (``NewOrderSingle``), the rule will generate on
   + Added `IRuleContext.removeRule()` method which allows a rule to remove itself
   + Added ability to schedule execution of arbitrary actions via `IRuleContext.execute` methods
 + Update th2-common to version 3.19.0
-    + Extended Utility classes
-        + Added the toTreeTable method to convert message/message filter to event data
-        + Added the Event.exception method to include an exception and optionally all the causes to the body data as a series of messages
+    + Update `th2-grpc-common` and `th2-grpc-service-generator` versions to `3.2.0` and `3.1.12` respectively
+    + Disable waiting for connection recovery when closing the `SubscribeMonitor`
+    + Change the way channels are stored (they mapped to the pin instead of the thread).
+  It might increase the average number of channels used by the box, but it also limits the max number of channels to the number of pins
+    + Added the property `workers`, which changes the count of gRPC server's threads
+    + Added `session alias` and `direction` labels to incoming metrics
+    + Rework logging for incoming and outgoing messages
+    + Resets embedded `log4j` configuration before configuring it from a file
+    + Fixed a bug with message filtering by `message_type`
