@@ -35,9 +35,9 @@ repositories {
 dependencies {
     api platform('com.exactpro.th2:bom:3.0.0')
 
-    implementation "com.exactpro.th2:sim:3.7.0"
-    implementation "com.exactpro.th2:common:3.19.0"
-    api "com.exactpro.th2:grpc-sim-template:3.1.1"
+    implementation "com.exactpro.th2:sim:3.8.0"
+    implementation "com.exactpro.th2:common:3.21.2"
+    api "com.exactpro.th2:grpc-sim-template:3.1.2"
     //api "com.exactpro.th2:grpc-sim-${grpc_suffix}${grpc_version.isEmpty() ? "" : ":${grpc_version}"}"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"

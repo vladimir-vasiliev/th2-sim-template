@@ -49,6 +49,9 @@ If the income message is correct (``NewOrderSingle``), the rule will generate on
 
 ## Release notes
 
+### 3.2.2
++ Update libraries version
+
 ### 3.2.0
 
 + Update th2-sim to version 3.7.0
