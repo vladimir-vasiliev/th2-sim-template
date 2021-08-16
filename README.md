@@ -67,3 +67,5 @@ If the income message is correct (``NewOrderSingle``), the rule will generate on
     + Rework logging for incoming and outgoing messages
     + Resets embedded `log4j` configuration before configuring it from a file
     + Fixed a bug with message filtering by `message_type`
+    
+#TEST
